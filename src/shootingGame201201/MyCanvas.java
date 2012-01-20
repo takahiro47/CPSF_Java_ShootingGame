@@ -327,10 +327,10 @@ public class MyCanvas extends Canvas implements Runnable {
 			if (myBullet_Visible[i]) drawMyBullet[i].drawMyBullet(gBuf2);
 		}
 		
-		/**** ①自分の弾と敵機 の衝突判定 ****/
+		/**** 1. 自分の弾と敵機 の衝突判定 ****/
 		//自分の弾が敵に当たっていたら爆発を生成して敵を消す
 		for (i=0; i<MY_BULLET_MAX; i++)
-			if (myBullet_Visible[i]) EnemyAndmyBulletXYWH_temp(gBuf2);
+			if (myBullet_Visible[i]) EnemyShip_and_MyBullet_Encounter(gBuf2);
 		//生成された爆発を描画
 		for (i=0; i<EXPLOSION_MAX; i++)
 			if (ExplosionVisible[i] == true) createExplosion[i].drawFire(gBuf2);
@@ -338,11 +338,11 @@ public class MyCanvas extends Canvas implements Runnable {
 		for (i=0; i<EXPLOSION_MAX; i++)
 			if (createExplosion[i].returnFireStep() > 140) ExplosionVisible[i] = false;
 		
-		/**** ②敵の弾と自機 の衝突判定 ****/
+		/**** 2. 敵の弾と自機 の衝突判定 ****/
 		//敵の弾に自機が当たったらゲームオーバー
 			////
 		
-		/**** ③敵機と自機 の衝突判定 ****/
+		/**** 3. 敵機と自機 の衝突判定 ****/
 		//敵機に自機が当たったらゲームオーバー
 			////
 		
@@ -364,10 +364,10 @@ public class MyCanvas extends Canvas implements Runnable {
 		gBuf2.drawString("Your Rank is....S", 10, 128);
 	}
 	
-	/**************************
-	 * 自分の弾と敵の座標の衝突を判定する関数(仮)
-	 **************************/
-	private void EnemyAndmyBulletXYWH_temp (Graphics gBuf2) {
+	/****************************************************
+	 * 1. 自分の弾と敵機 の衝突判定をする関数
+	 ****************************************************/
+	private void EnemyShip_and_MyBullet_Encounter (Graphics gBuf2) {
 		int i, j;
 		int[] enemyShipA_XYWH = new int[4];
 		int[] myBulletXYWH_temp; //弾の座標を取り敢えず入れておくための配列
@@ -406,7 +406,21 @@ public class MyCanvas extends Canvas implements Runnable {
 				//敵は死んでいるので得点・爆発はいじらない
 			}
 		}
-	}	
+	}
+	
+	/****************************************************
+	 * 2. 敵の弾と自機 の衝突判定をする関数
+	 ****************************************************/
+	private void EnemyBullet_and_MyShip_Encounter (Graphics gBuf2) {
+		////
+	}
+	
+	/****************************************************
+	 * 3. 敵機と自機 の衝突判定をする関数
+	 ****************************************************/
+	private void EnemyShip_and_MyShip_Encounter (Graphics gBuf2) {
+		////
+	}
 }
 
 
