@@ -10,6 +10,7 @@ public class DrawMyShip extends Canvas {
 	
 	Image MyShip_img; //画像
 	int[] MyShipXY = {200, 500}; //初期座標
+	int[] MyShipXY_Move = {0, 0}; //移動値
 	int[] MyShipSize = {162/3, 210/3}; //自機の大きさ(自動取得したいけど分からないから取り敢えず)
 	
 	/****************************************************
@@ -23,9 +24,13 @@ public class DrawMyShip extends Canvas {
 	
 	/****************************************************
 	 * 自機の位置の初期化
+	 * @return 
 	 ****************************************************/
-	init () {
+	void init () {
 		System.out.println("動作てすと: DrawMyShip/init");
+		//移動値をリセット
+		MyShipXY_Move[0] = 0;
+		MyShipXY_Move[1] = 0;
 	}
 	
 	/****************************************************
@@ -34,14 +39,18 @@ public class DrawMyShip extends Canvas {
 	void moveMyShip (int LeftRight, int UpDown) {
 		//左右移動(端に行ったらストップ)
 		if (LeftRight == -1)
-			if (MyShipXY[0] >= MOVESPEED) MyShipXY[0] -= MOVESPEED;
+			if (MyShipXY[0] + MyShipXY_Move[0] >= MOVESPEED + MyShipSize[0]/2)
+				MyShipXY_Move[0] -= MOVESPEED;
 		else if (LeftRight == 1)
-			if (MyShipXY[0] <= WIDTH-MyShipSize[0]-MOVESPEED) MyShipXY[0] += MOVESPEED;
+			if (MyShipXY[0] + MyShipXY_Move[0] <= WIDTH - MyShipSize[0]/2 - MOVESPEED)
+				MyShipXY_Move[0] += MOVESPEED;
 		//上下移動(端に行ったらストップ)
 		if (UpDown == -1)
-			if (MyShipXY[1] >= MOVESPEED) MyShipXY[1] -= MOVESPEED;
+			if (MyShipXY[1] + MyShipXY_Move[1] >= MOVESPEED + MyShipSize[1]/2)
+				MyShipXY_Move[1] -= MOVESPEED;
 		else if (UpDown == 1)
-			if (MyShipXY[1] <= HEIGHT-MyShipSize[1]-MOVESPEED) MyShipXY[1] += MOVESPEED;
+			if (MyShipXY[1] + MyShipXY_Move[1] <= HEIGHT - MyShipSize[1]/2 - MOVESPEED)
+				MyShipXY_Move[1] += MOVESPEED;
 	}
 	
 	/****************************************************

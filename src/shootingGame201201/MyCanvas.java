@@ -344,13 +344,13 @@ public class MyCanvas extends Canvas implements Runnable {
 		
 		/**** ③敵機と自機 の衝突判定 ****/
 		//敵機に自機が当たったらゲームオーバー
+			////
 		
+		/**** その他の描画 ****/
 		//文字などを描画
 		gBuf2.setColor(Color.white);
 		gBuf2.drawString("GAME START...", 10, 80);
 		gBuf2.drawString("STAGE 1", 10, 96);
-		gBuf2.setFont(subtitleFont);
-		//gBuf2.drawString("(counter=" + counter + ")", 20, 200);
 	}
 
 	/*--------------------------------------------------
@@ -359,9 +359,9 @@ public class MyCanvas extends Canvas implements Runnable {
 	private void drawGameOver(Graphics gBuf2) {
 		gBuf2.setColor(Color.white);
 		gBuf2.setFont(titleFont);
-		gBuf2.drawString("GAME OVER...", 20, 150);
-		gBuf2.setFont(subtitleFont);
-		//gBuf2.drawString("(counter=" + counter + ")", 20, 200);
+		gBuf2.drawString("GAME OVER!!", 20, 80);
+		gBuf2.drawString("Your Score is..."+score, 10, 110);
+		gBuf2.drawString("Your Rank is....S", 10, 128);
 	}
 	
 	/**************************
