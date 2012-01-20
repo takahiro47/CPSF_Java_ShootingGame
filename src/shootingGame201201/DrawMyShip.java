@@ -36,21 +36,23 @@ public class DrawMyShip extends Canvas {
 	/****************************************************
 	 * 自機を移動する関数
 	 ****************************************************/
-	void moveMyShip (int LeftRight, int UpDown) {
+	void moveMyShip (int width, int height, int LeftRight, int UpDown) {
 		//左右移動(端に行ったらストップ)
-		if (LeftRight == -1)
-			if (MyShipXY[0] + MyShipXY_Move[0] >= MOVESPEED + MyShipSize[0]/2)
+		if (LeftRight == -1) {
+			if (MyShipXY[0] + MyShipXY_Move[0] >= MOVESPEED - MyShipSize[0]/2)
 				MyShipXY_Move[0] -= MOVESPEED;
-		else if (LeftRight == 1)
-			if (MyShipXY[0] + MyShipXY_Move[0] <= WIDTH - MyShipSize[0]/2 - MOVESPEED)
+		} else if (LeftRight == 1) {
+			if (MyShipXY[0] + MyShipXY_Move[0] <= width - MyShipSize[0]/2 - MOVESPEED)
 				MyShipXY_Move[0] += MOVESPEED;
+		}
 		//上下移動(端に行ったらストップ)
-		if (UpDown == -1)
+		if (UpDown == -1) {
 			if (MyShipXY[1] + MyShipXY_Move[1] >= MOVESPEED + MyShipSize[1]/2)
 				MyShipXY_Move[1] -= MOVESPEED;
-		else if (UpDown == 1)
-			if (MyShipXY[1] + MyShipXY_Move[1] <= HEIGHT - MyShipSize[1]/2 - MOVESPEED)
+		} else if (UpDown == 1) {
+			if (MyShipXY[1] + MyShipXY_Move[1] <= height - MyShipSize[1]/2 - MOVESPEED)
 				MyShipXY_Move[1] += MOVESPEED;
+		}
 	}
 	
 	/****************************************************
@@ -59,14 +61,16 @@ public class DrawMyShip extends Canvas {
 	void drawMyShip (Graphics gBuf2) {
 //		System.out.println("動作てすと: DrawMyShip/drawShip");
 		gBuf2.drawImage(MyShip_img,
-				MyShipXY[0], MyShipXY[1], MyShipSize[0], MyShipSize[1], this);
+				MyShipXY[0]+MyShipXY_Move[0], MyShipXY[1]+MyShipXY_Move[1],
+				MyShipSize[0], MyShipSize[1], this);
 	}
 	
 	/****************************************************
 	 * 別クラスから自機の位置を取得する為の関数
 	 ****************************************************/
 	int[] getMyShipXYWH () {
-		int[] tempXYWH = {MyShipXY[0], MyShipXY[1], MyShipSize[0], MyShipSize[1]};
+		int[] tempXYWH = {MyShipXY[0]+MyShipXY_Move[0], MyShipXY[1]+MyShipXY_Move[1],
+				MyShipSize[0], MyShipSize[1]};
 		return tempXYWH;
 	}
 }

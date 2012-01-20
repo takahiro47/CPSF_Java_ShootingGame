@@ -28,8 +28,8 @@ public class DrawMyBullet extends Canvas {
 		System.out.println("動作てすと: DrawMyBullet/init");
 		MyShipXYWH_AtThat[0] = 0;
 		MyShipXYWH_AtThat[1] = 0;
-		MyShipXYWH_AtThat[2] = 0;
-		MyShipXYWH_AtThat[3] = 0;
+		MyShipXYWH_AtThat[2] = MyBullet_imgSize[0];
+		MyShipXYWH_AtThat[3] = MyBullet_imgSize[1];
 		MyBulletXY_Move[0] = 0;
 		MyBulletXY_Move[1] = 0;
 	}
@@ -40,7 +40,10 @@ public class DrawMyBullet extends Canvas {
 	public void init(int[] myShipXYWH) {
 		System.out.println("動作てすと: DrawMyBullet/init");
 		//弾を撃った瞬間の自機の位置を弾の初期位置に設定
-		for (int i=0; i<4; i++) MyShipXYWH_AtThat[i] = myShipXYWH[i];
+		MyShipXYWH_AtThat[0] = myShipXYWH[0] + myShipXYWH[2]/2; //機体の真ん中から発射
+		MyShipXYWH_AtThat[1] = myShipXYWH[1];
+		MyShipXYWH_AtThat[2] = myShipXYWH[2];
+		MyShipXYWH_AtThat[3] = myShipXYWH[3];
 		//動きをリセット
 		MyBulletXY_Move[0] = 0;
 		MyBulletXY_Move[1] = 0;
@@ -56,7 +59,7 @@ public class DrawMyBullet extends Canvas {
 		MyBulletXY_Move[1] -= MY_BULLET_SPEED;
 		//描画
 		gBuf2.drawImage(MyBullet_img, 
-				MyShipXYWH_AtThat[0]+MyShipXYWH_AtThat[2]/2+MyBulletXY_Move[0], MyShipXYWH_AtThat[1]+MyBulletXY_Move[1],
+				MyShipXYWH_AtThat[0]+MyBulletXY_Move[0], MyShipXYWH_AtThat[1]+MyBulletXY_Move[1],
 				MyBullet_imgSize[0], MyBullet_imgSize[1], this);
 	}
 	

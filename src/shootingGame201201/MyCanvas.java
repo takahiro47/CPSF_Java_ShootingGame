@@ -54,24 +54,21 @@ public class MyCanvas extends Canvas implements Runnable {
 		//自機クラス
 		DrawMyShip myShip;
 		boolean myShip_Visible;
-		int[] myShipXYWH_temp; //座標一時保管用
 		//敵機クラス
 		static final int ENEMY_SHIP_MAX = 80; //敵の最大数
 		DrawEnemyShip[] enemyShip;
 		boolean enemyShip_Visible[] = new boolean[ENEMY_SHIP_MAX];
 		int enemyShip_count;
-		int[] enemyShipXYWH_temp = new int[ENEMY_SHIP_MAX]; //座標一時保管用
 		//自分の弾クラス
 		static final int MY_BULLET_MAX = 100; //自分が一気に撃てる弾の最大数
 		DrawMyBullet[] drawMyBullet;
 		boolean myBullet_Visible[] = new boolean[MY_BULLET_MAX];
 		int myBullet_count;
-		int[] myBulletXYWH_temp = new int[MY_BULLET_MAX]; //座標一時保管用
 		//敵の弾クラス
 			////
 		//爆発生成クラス
 		static final int EXPLOSION_MAX = 40; //爆発の最大数
-		CreateExplosion[] createExplosion;
+		DrawExplosion[] drawExplosion;
 		boolean ExplosionVisible[] = new boolean[EXPLOSION_MAX];
 		int explosion_count;
 		
@@ -98,8 +95,8 @@ public class MyCanvas extends Canvas implements Runnable {
 		for (i=0; i<ENEMY_SHIP_MAX; i++) enemyShip[i] = new DrawEnemyShip();
 		enemyShip_count = 0;
 		//爆発生成クラス
-		createExplosion = new CreateExplosion[EXPLOSION_MAX];
-		for (i=0; i<EXPLOSION_MAX; i++) createExplosion[i] = new CreateExplosion();
+		drawExplosion = new DrawExplosion[EXPLOSION_MAX];
+		for (i=0; i<EXPLOSION_MAX; i++) drawExplosion[i] = new DrawExplosion();
 		explosion_count = 0;
 		//自分の弾クラス
 		drawMyBullet = new DrawMyBullet[MY_BULLET_MAX];
@@ -278,11 +275,13 @@ public class MyCanvas extends Canvas implements Runnable {
 	private void drawMainGame(Graphics gBuf2) {
 		int i;
 		int[] myShipXYWH = new int[4];
+		int[] myBulletXYWH = new int[4];
+		int[] enemyShipXYWH = new int[4];
 		myShipXYWH = myShip.getMyShipXYWH();
 		
 		/**** 自機の描画 ****/
 		//自機の位置を移動し、描画
-		myShip.moveMyShip(keyboard.LeftRightListener(), keyboard.UpDownListener());
+		myShip.moveMyShip(WIDTH, HEIGHT, keyboard.LeftRightListener(), keyboard.UpDownListener());
 		myShip.drawMyShip(gBuf2);
 		
 		/**** 敵機の描画 ****/
@@ -297,8 +296,8 @@ public class MyCanvas extends Canvas implements Runnable {
 		//画面外(下)に出た敵機は表示を止める
 		for (i=0; i<ENEMY_SHIP_MAX; i++) {
 			if (enemyShip_Visible[i] == true) {
-				enemyShipXYWH_temp = enemyShip[i].getEnemyShip_XYWH(); 
-				if (enemyShipXYWH_temp[1] > HEIGHT) enemyShip_Visible[i] = false;
+				enemyShipXYWH = enemyShip[i].getEnemyShip_XYWH(); 
+				if (enemyShipXYWH[1] > HEIGHT) enemyShip_Visible[i] = false;
 			}
 		}
 		//敵機を描画
@@ -318,8 +317,8 @@ public class MyCanvas extends Canvas implements Runnable {
 		//画面外(上)に出た自分の弾は表示をやめる
 		for (i=0; i<MY_BULLET_MAX; i++) {
 			if (myBullet_Visible[i]) {
-				myBulletXYWH_temp = drawMyBullet[i].getMyBulletXYWH();
-				if (myBulletXYWH_temp[1] < 0) myBullet_Visible[i] = false;
+				myBulletXYWH = drawMyBullet[i].getMyBulletXYWH();
+				if (myBulletXYWH[1] < 0) myBullet_Visible[i] = false;
 			}
 		}
 		//発射した自分の弾を描画
@@ -333,10 +332,10 @@ public class MyCanvas extends Canvas implements Runnable {
 			if (myBullet_Visible[i]) EnemyShip_and_MyBullet_Encounter(gBuf2);
 		//生成された爆発を描画
 		for (i=0; i<EXPLOSION_MAX; i++)
-			if (ExplosionVisible[i] == true) createExplosion[i].drawFire(gBuf2);
+			if (ExplosionVisible[i] == true) drawExplosion[i].drawFire(gBuf2);
 		//描画の終わった爆発の表示を停止
-		for (i=0; i<EXPLOSION_MAX; i++)
-			if (createExplosion[i].returnFireStep() > 140) ExplosionVisible[i] = false;
+		for (i=0; i<EXPLOSION_MAX; i++) {
+			if (drawExplosion[i].returnFireStep() > 140) ExplosionVisible[i] = false; }
 		
 		/**** 2. 敵の弾と自機 の衝突判定 ****/
 		//敵の弾に自機が当たったらゲームオーバー
@@ -369,30 +368,31 @@ public class MyCanvas extends Canvas implements Runnable {
 	 ****************************************************/
 	private void EnemyShip_and_MyBullet_Encounter (Graphics gBuf2) {
 		int i, j;
-		int[] enemyShipA_XYWH = new int[4];
-		int[] myBulletXYWH_temp; //弾の座標を取り敢えず入れておくための配列
+		int[] enemyShipXYWH = new int[4];
+		int[] myBulletXYWH = new int[4]; //弾の座標を取り敢えず入れておくための配列
 		
 		for (j=0; j<ENEMY_SHIP_MAX; j++) {
-			enemyShipA_XYWH = enemyShip[j].getEnemyShip_XYWH(); //敵機の座標、大きさを取得
+			enemyShipXYWH = enemyShip[j].getEnemyShip_XYWH(); //敵機の座標、大きさを取得
+			
 			if (enemyShip_Visible[j] == true) { //弾が有効だったら
 				for (i=0; i<MY_BULLET_MAX; i++) {
-					if (myBullet_Visible[i] == true) { //敵がもう死んでたら判断いらない
-						myBulletXYWH_temp = drawMyBullet[i].getMyBulletXYWH(); //自分の撃った弾の座標
+					if (myBullet_Visible[i] == true) { //敵がまだ生きていたら
+						myBulletXYWH = drawMyBullet[i].getMyBulletXYWH(); //自分の撃った弾の座標
 						//X座標の判定(敵の大きさでも判断)
-						if (enemyShipA_XYWH[0]<=myBulletXYWH_temp[0] && myBulletXYWH_temp[0]<=enemyShipA_XYWH[0]+enemyShipA_XYWH[2]) {
+						if ((enemyShipXYWH[0]<=(myBulletXYWH[0]+myBulletXYWH[2]))&&(myBulletXYWH[0]<=(enemyShipXYWH[0]+enemyShipXYWH[2]))) {
 							//Y座標判定(敵の大きさでも判断)
-							if (enemyShipA_XYWH[1]<=myBulletXYWH_temp[1] && myBulletXYWH_temp[1]<=enemyShipA_XYWH[1]+enemyShipA_XYWH[3]) {
+							if ((enemyShipXYWH[1]<=(myBulletXYWH[1]+myBulletXYWH[3]))&&(myBulletXYWH[1]<=(enemyShipXYWH[1]+enemyShipXYWH[3]))) {
 							//座標が被っていたら
 								//スコア追加
 								score += 5;
 								if (score > score_max) score_max = score;
 								
 								//爆発を生成
-								createExplosion[explosion_count].init(enemyShipA_XYWH);
+								drawExplosion[explosion_count].init(enemyShipXYWH);
 								ExplosionVisible[explosion_count] = true;
 								
 								explosion_count++;
-								if (explosion_count == EXPLOSION_MAX-1) explosion_count = 0;
+								if (explosion_count == EXPLOSION_MAX) explosion_count = 0;
 								
 								//敵の機体を消す
 								enemyShip_Visible[j] = false;
@@ -402,8 +402,6 @@ public class MyCanvas extends Canvas implements Runnable {
 						}
 					}
 				}
-			} else { //お前はもう死んでいry
-				//敵は死んでいるので得点・爆発はいじらない
 			}
 		}
 	}
@@ -412,14 +410,43 @@ public class MyCanvas extends Canvas implements Runnable {
 	 * 2. 敵の弾と自機 の衝突判定をする関数
 	 ****************************************************/
 	private void EnemyBullet_and_MyShip_Encounter (Graphics gBuf2) {
-		////
+		////てかまだ敵の弾実装してない
 	}
 	
 	/****************************************************
 	 * 3. 敵機と自機 の衝突判定をする関数
 	 ****************************************************/
 	private void EnemyShip_and_MyShip_Encounter (Graphics gBuf2) {
-		////
+		int i;
+		int[] myShipXYWH = new int[4];
+		int[] enemyShipXYWH = new int[4];
+		
+		myShipXYWH = myShip.getMyShipXYWH();
+		
+		for (i=0; i<ENEMY_SHIP_MAX; i++) {
+			//敵機の座標を取得
+			enemyShipXYWH = enemyShip[i].getEnemyShip_XYWH();
+			//自機の座標と敵機の座標が被っているかチェック
+			if ((enemyShipXYWH[0]+enemyShipXYWH[2]<=myShipXYWH[0])&&(myShipXYWH[0]+myShipXYWH[2]<=enemyShipXYWH[0])) { //x座標判定
+				if ((enemyShipXYWH[1]+enemyShipXYWH[3]<=myShipXYWH[1])&&(myShipXYWH[1]+myShipXYWH[3]<=enemyShipXYWH[1])) { //y座標判定
+					//座標が被っていたら
+					System.out.println("動作てすと: MyCanvas/EnemyShip_and_MyShip_Encounter (敵機&自機の衝突発生)");
+					
+					//爆発を生成
+					drawExplosion[explosion_count].init(enemyShipXYWH);
+					ExplosionVisible[explosion_count] = true;
+					
+					explosion_count++;
+					if (explosion_count == EXPLOSION_MAX) explosion_count = 0;
+					
+					//敵の機体を消す
+					enemyShip_Visible[i] = false;
+					
+					//自分の機体を消す
+					myShip_Visible = false;
+				}
+			}
+		}
 	}
 }
 

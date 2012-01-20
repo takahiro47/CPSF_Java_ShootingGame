@@ -4,7 +4,7 @@ import java.awt.Canvas;
 import java.awt.Graphics;
 import java.awt.Image;
 
-public class CreateExplosion extends Canvas {
+public class DrawExplosion extends Canvas {
 	//爆発の画像とステップ(弾とかが当たった時に発生)
 	Image img_fire_a; //爆発画像ステップ1
 	Image img_fire_b; //爆発画像ステップ2
@@ -22,7 +22,7 @@ public class CreateExplosion extends Canvas {
 	/**************************
 	 * コンストラクタ
 	 **************************/
-	CreateExplosion() {
+	DrawExplosion() {
 		img_fire_a = getToolkit().getImage("img/fire01_a@x64y64.png"); //爆発系
 		img_fire_b = getToolkit().getImage("img/fire01_b@x64y64.png"); //爆発系
 		img_fire_c = getToolkit().getImage("img/fire01_c@x64y64.png"); //爆発系
