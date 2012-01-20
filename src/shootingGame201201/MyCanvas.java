@@ -20,9 +20,9 @@ import java.awt.Image;
  */
 
 public class MyCanvas extends Canvas implements Runnable {
-	/**************************
-	 * 変数とかクラスとか
-	 **************************/
+	/****************************************************
+	 * 変数とかクラス
+	 ****************************************************/
 	/*----ゲーム全体に関わる変数----*/
 	//時間経過カウント
 	int counter;
@@ -39,6 +39,7 @@ public class MyCanvas extends Canvas implements Runnable {
 	//ウィンドウサイズと背景
 	static final int WIDTH = 480;
 	static final int HEIGHT = 700;
+	static final int GAMESPEED = 15; //描画ループの間隔(15ミリ秒=0.015秒)
 	//描画関係
 	Image imgBuf;
 	Graphics gBuf;
@@ -47,12 +48,12 @@ public class MyCanvas extends Canvas implements Runnable {
 	Font scoreFont = new Font("popstarregular", Font.PLAIN, 12);
 	/*----その他のクラスとか変数----*/
 	//背景画像
-	Image img_bg;
+	Image background_img;
 	//キー監視クラス
 	KeyboardListener keyboard;
 	//敵クラス
 	static final int ENEMY_MAX = 80; //敵の最大数
-	DrawEnemyShip[] enemy;
+	DrawEnemyShip[] EnemyShip;
 	boolean enemyVisible[] = new boolean[ENEMY_MAX];
 	int enemy_count;
 	int[] temp_enemyXYWH = new int[ENEMY_MAX];
@@ -74,17 +75,17 @@ public class MyCanvas extends Canvas implements Runnable {
 	Image img_myShip; //自機画像(素材-> http://maglog.jp/layer79ray97/Article1191293.html)
 	
 	
-	/**************************
-	 * コストラクタと初期化系
-	 **************************/
+	/****************************************************
+	 * コストラクタ
+	 ****************************************************/
 	MyCanvas() {
 		int i;
 		//キー入力クラス
 		keyboard = new KeyboardListener();
 		addKeyListener(keyboard);
 		//敵クラス(取り敢えず1個→量産可能に)
-		enemy = new DrawEnemyShip[ENEMY_MAX];
-		for (i=0; i<ENEMY_MAX; i++) enemy[i] = new DrawEnemyShip();
+		EnemyShip = new DrawEnemyShip[ENEMY_MAX];
+		for (i=0; i<ENEMY_MAX; i++) EnemyShip[i] = new DrawEnemyShip();
 		enemy_count = 0;
 		//爆発生成クラス(爆発はEXPLOSION_MAX個まで一気に起こる)
 		createExplosion = new CreateExplosion[EXPLOSION_MAX];
@@ -94,10 +95,13 @@ public class MyCanvas extends Canvas implements Runnable {
 		drawMyBullet = new DrawMyBullet[TAMA_MAX];
 		for (i=0; i<TAMA_MAX; i++) drawMyBullet[i] = new DrawMyBullet();
 		tama_count = 0;
+		//敵の弾クラス
+		
 	}
-	
-	//変数を初期化する関数
-	//ゲームスタート時に実行する
+
+	/****************************************************
+	 * 変数を初期化する関数(ゲームスタート時に実行)
+	 ****************************************************/
 	public void init() {
 		int a;
 		gameSceneSelecter = GAME_TITLE;
@@ -107,7 +111,7 @@ public class MyCanvas extends Canvas implements Runnable {
 		//敵機の位置などのリセット
 		for (a=0; a<ENEMY_MAX; a++) {
 			enemyVisible[a] = false;
-			enemy[a].init();
+			EnemyShip[a].init();
 		}
 		
 		//弾を表示と位置をリセット
@@ -120,7 +124,7 @@ public class MyCanvas extends Canvas implements Runnable {
 		for (a=0; a<EXPLOSION_MAX; a++) ExplosionVisible[a] = false;
 		
 		/* 画像の読み込み */
-		img_bg = getToolkit().getImage("img/back01@x480y720.jpg"); //背景
+		background_img = getToolkit().getImage("img/back01@x480y720.jpg"); //背景
 		img_myShip = getToolkit().getImage("img/myship@x162y210.png"); //自機
 	}
 	
@@ -132,21 +136,18 @@ public class MyCanvas extends Canvas implements Runnable {
 	}
 	
 	
-	/**************************
+	/****************************************************
 	 * スレッド(メインループ)
-	 **************************/
+	 ****************************************************/
 	@Override
 	public void run() {
 		//描画のちらつき防止のため、ダブルバッファリング処理
-		//(URI: http://hp.vector.co.jp/authors/VA012735/java/dbuf1.htm)
-		imgBuf = createImage(480, 700); //これがオフスクリーンバッファ
+		//(URL: http://hp.vector.co.jp/authors/VA012735/java/dbuf1.htm)
+		imgBuf = createImage(480, 700); //これがオフスクリーンバッファ(?)
 		gBuf = imgBuf.getGraphics();
 		
 		//ここで色々と描画
-		for (counter = 0; ; counter++) {
-			//キーリスナー(Escapeでゲームをノーコン)
-			//if (keyboard.EscapeKeyListener() == 1) init(); //ゲームを初期化
-			
+		for (counter = 0; ; counter++) {			
 			//バッファを白で塗りつぶしてクリア
 			gBuf.setColor(Color.white);
 			gBuf.fillRect(0,0,480,700);
@@ -159,14 +160,14 @@ public class MyCanvas extends Canvas implements Runnable {
 			
 			//ループの間隔(20ミリ秒=0.02秒)
 			try {
-				Thread.sleep(10);
+				Thread.sleep(GAMESPEED);
 			} catch(InterruptedException e) {}
 		}
 	}
 	
-	/**************************
-	 * 描画制御系
-	 **************************/
+	/****************************************************
+	 * 描画制御系の関数
+	 ****************************************************/
 	//バッファを画面に描画する
 	@Override
 	public void paint(Graphics g) {
@@ -180,38 +181,58 @@ public class MyCanvas extends Canvas implements Runnable {
 		paint(g);
 	}
 	
-	//ゲーム画面をここで描画していく予定(0.02秒おきに再描画)
+	/****************************************************
+	 * ゲーム状況の変更にあわせて描画をする関数
+	 * (キー入力でゲーム状況の変更も制御する)
+	 ****************************************************/
 	void gameScene() {
+		//背景レイヤーを描画
 		drawBackGround(gBuf);
+		//ゲームの内容を描画
 		switch (gameSceneSelecter) {
-		case GAME_TITLE:
-			//Spaceキーで開始(GAME_MAINGAMEへ)
-			if (keyboard.SpaceKeyListener() != 0) gameSceneSelecter = GAME_MAINGAME;
-			drawTitle(gBuf); break;
-		case GAME_MAINGAME:
-			//Escapeキーで離脱(GAME_TITLEへ)
-			if (keyboard.EscapeKeyListener() == 1) init(); //ゲームを初期化
-			drawMainGame(gBuf);	break;
-		case GAME_GAMEOVER:
-			//Spaceキーでリセット(GAME_TITLEへ)
-			if (keyboard.EscapeKeyListener() == 1) init(); //(最高スコアを記録し、)ゲームを初期化
-			drawGameOver(gBuf);	break;
-		default: //一応エラー処理
-			//exit的な
+			case GAME_TITLE:
+				//Spaceキーで開始(GAME_MAINGAMEへ)
+				if (keyboard.SpaceKeyListener() != 0) gameSceneSelecter = GAME_MAINGAME;
+				drawTitle(gBuf); break;
+			case GAME_MAINGAME:
+				//Escapeキーで離脱(GAME_TITLEへ)
+				if (keyboard.EscapeKeyListener() == 1) init(); //ゲームを初期化
+				drawMainGame(gBuf);	break;
+			case GAME_GAMEOVER:
+				//Spaceキーでリセット(GAME_TITLEへ)
+				if (keyboard.EscapeKeyListener() == 1) init(); //(最高スコアを記録し、)ゲームを初期化
+				drawGameOver(gBuf);	break;
 		}
+		//スコアとレベルのレイヤーを描画
 		drawScore(gBuf);
 	}
 	
+	/****************************************************
+	 * 背景を描画する関数
+	 ****************************************************/
 	private void drawBackGround(Graphics gBuf2) {
-		gBuf2.drawImage(img_bg, 0, 0, 480, 720, this);
+		gBuf2.drawImage(background_img, 0, 0, 480, 720, this);
+	}
+	
+	/****************************************************
+	 * スコアとレベルを描画する関数
+	 ****************************************************/
+	private void drawScore(Graphics gBuf2) {
+		gBuf2.setFont(scoreFont);
+		gBuf2.setColor(Color.white);
+		gBuf2.drawString("CREDITS: "+score_max, 345, 24); //画面右上に最高スコアを描画
+		gBuf2.drawString("SCORE: "+score, 358, 44); //画面右上にゲームスコアを描画
+		gBuf2.drawString("LEVEL: "+level, 10, 24); //画面左上にレベルを描画
+		
+		gBuf2.drawString("counter: "+counter, 10, 680); //カウンター
 	}
 
-	/**************************
-	 * ゲームの内容を実際に描画する関数群
-	 **************************/
-	/*-------------------------
+	/****************************************************
+	 * ゲームの内容を描画する関数群(シーン別)
+	 ****************************************************/
+	/*--------------------------------------------------
 	 * ゲームタイトル
-	 *------------------------*/
+	 *-------------------------------------------------*/
 	private void drawTitle(Graphics gBuf2) {
 		gBuf2.setColor(Color.white);
 		
@@ -220,21 +241,21 @@ public class MyCanvas extends Canvas implements Runnable {
 		gBuf2.setFont(titleFont);
 		gBuf2.drawString("シューティング作ってみた", 65, 230);
 		gBuf2.setFont(subtitleFont);
-		//gBuf2.drawString("(counter=" + counter + ")", 175, 220);
+//		gBuf2.drawString("(counter=" + counter + ")", 175, 220); //カウンターの出力
 //		gBuf2.drawString(s1, 160, 300); //デバッグ用
 		
-		//"Press Space Key"
+		//"Press Space Key"の出力
 		gBuf2.setFont(subtitleFont);
 		gBuf2.drawString("Press Space Key", 175, 500);
-		//ドットを点滅
+		//(ドットを点滅)
 		if (counter%300 <= 100) gBuf2.drawString(".", 300, 500);
 		else if (counter%300 <= 200) gBuf2.drawString("..", 300, 500);
 		else gBuf2.drawString("...", 300, 500);
 	}
 	
-	/*-------------------------
+	/*--------------------------------------------------
 	 * メインゲーム
-	 *------------------------*/
+	 *-------------------------------------------------*/
 	private void drawMainGame(Graphics gBuf2) {
 		int i;
 		/* プレイヤーの位置を移動 */
@@ -258,25 +279,23 @@ public class MyCanvas extends Canvas implements Runnable {
 		
 		//敵をランダムに生成する
 		if (counter%24 == 0) {
-			enemy[enemy_count].init();
+			EnemyShip[enemy_count].init();
 			enemyVisible[enemy_count] = true;
 			
 			enemy_count++;
 			if (enemy_count == ENEMY_MAX) enemy_count = 0;
-		}//(やられた敵は自然に表示がfalseに)
+		} //(やられた敵は自然に表示がfalseに)
 		//画面外(下)に出た敵は非表示に
 		for (i=0; i<ENEMY_MAX; i++) {
 			if (enemyVisible[i] == true) {
-				temp_enemyXYWH = enemy[i].getEnemyShip_XYWH(); 
+				temp_enemyXYWH = EnemyShip[i].getEnemyShip_XYWH(); 
 				if (temp_enemyXYWH[1] > HEIGHT) enemyVisible[i] = false;
 			}
 		}
 			
 		//敵を描画
-		for (i=0; i<ENEMY_MAX; i++) if (enemyVisible[i] == true) enemy[i].enemyDraw(gBuf2);
+		for (i=0; i<ENEMY_MAX; i++) if (enemyVisible[i] == true) EnemyShip[i].enemyDraw(gBuf2);
 
-		
-		
 		//スペースキーで弾を発射
 		if (keyboard.SpaceKeyListener() == 1) { //Spaceキー押下時
 			if (counter%7 == 0) { //連射しすぎ防止のため、カウンターが8の倍数の時だけ発射。
@@ -321,28 +340,15 @@ public class MyCanvas extends Canvas implements Runnable {
 		//gBuf2.drawString("(counter=" + counter + ")", 20, 200);
 	}
 
-	/*-------------------------
+	/*--------------------------------------------------
 	 * ゲームオーバー
-	 *------------------------*/
+	 *-------------------------------------------------*/
 	private void drawGameOver(Graphics gBuf2) {
 		gBuf2.setColor(Color.white);
 		gBuf2.setFont(titleFont);
 		gBuf2.drawString("GAME OVER...", 20, 150);
 		gBuf2.setFont(subtitleFont);
 		//gBuf2.drawString("(counter=" + counter + ")", 20, 200);
-	}
-	
-	/**************************
-	 * スコア・レベル描画関数
-	 **************************/
-	private void drawScore(Graphics gBuf2) {
-		gBuf2.setFont(scoreFont);
-		gBuf2.setColor(Color.white);
-		gBuf2.drawString("CREDITS: "+score_max, 345, 24); //画面右上に最高スコアを描画
-		gBuf2.drawString("SCORE: "+score, 358, 44); //画面右上にゲームスコアを描画
-		gBuf2.drawString("LEVEL: "+level, 10, 24); //画面左上にレベルを描画
-		
-		gBuf2.drawString("counter: "+counter, 10, 680); //カウンター
 	}
 	
 	/**************************
@@ -354,7 +360,7 @@ public class MyCanvas extends Canvas implements Runnable {
 		int[] myShipTama; //弾の座標を取り敢えず入れておくための配列
 		
 		for (j=0; j<ENEMY_MAX; j++) {
-			enemyShipA_XYWH = enemy[j].getEnemyShip_XYWH(); //敵機の座標、大きさを取得
+			enemyShipA_XYWH = EnemyShip[j].getEnemyShip_XYWH(); //敵機の座標、大きさを取得
 			if (enemyVisible[j] == true) { //弾が有効だったら
 				for (i=0; i<TAMA_MAX; i++) {
 					if (tamaVisible[i] == true) { //敵がもう死んでたら判断いらない
