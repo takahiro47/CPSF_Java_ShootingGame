@@ -5,63 +5,69 @@ import java.awt.Graphics;
 import java.awt.Image;
 
 public class DrawMyBullet extends Canvas {
-	//画像系
-	Image img_tama; //弾の画像
-	//座標系
-	int[] img_tamaSize = {2*2, 10*2}; //弾(仮)
-	int[] myShipXYWH_AtThat = new int[4]; //自分が弾を撃った時の座標を保管
-	int[] tamaMOVE = {0, 0};
+	//自機の弾 の定義
+	final static int MY_BULLET_SPEED = 5; //弾の速さ
+	Image MyBullet_img; //画像
+	int[] MyBullet_imgSize = {2*2, 10*2}; //大きさ
+	int[] MyShipXYWH_AtThat = new int[4]; //自分が弾を撃った時点の座標を保管
+	int[] MyBulletXY_Move = {0, 0}; //動き幅
 	
-	/* コンストラクタ */
+	/****************************************************
+	 * コンストラクタ
+	 ****************************************************/
 	DrawMyBullet() {
 		System.out.println("動作てすと: DrawMyBullet/コンストラクタ");
 		//画像
-		img_tama = getToolkit().getImage("img/MyBullet01_a@x2y10.png"); //自分の弾
+		MyBullet_img = getToolkit().getImage("img/MyBullet01_a@x2y10.png"); //自分の弾
 	}
 	
-	/**************************
-	 * 弾の位置と動きを0に初期化(リセットする時のinit)
-	 **************************/
+	/****************************************************
+	 * 弾の位置と動きを0に初期化(リセットする時のinit) ?
+	 ****************************************************/
 	public void init() {
 		System.out.println("動作てすと: DrawMyBullet/init");
-		myShipXYWH_AtThat[0] = 0;
-		myShipXYWH_AtThat[1] = 0;
-		myShipXYWH_AtThat[2] = 0;
-		myShipXYWH_AtThat[3] = 0;
-		tamaMOVE[0] = 0;
-		tamaMOVE[1] = 0;
+		MyShipXYWH_AtThat[0] = 0;
+		MyShipXYWH_AtThat[1] = 0;
+		MyShipXYWH_AtThat[2] = 0;
+		MyShipXYWH_AtThat[3] = 0;
+		MyBulletXY_Move[0] = 0;
+		MyBulletXY_Move[1] = 0;
 	}
 	
-	/**************************
-	 * 弾の位置と動きを初期化(撃つときのinit)
-	 **************************/
-	public void init(int[] myShipXY, int[] myShipSize) {
+	/****************************************************
+	 * 弾の位置と動きを初期化(撃つときのinit) ?
+	 ****************************************************/
+	public void init(int[] myShipXYWH) {
 		System.out.println("動作てすと: DrawMyBullet/init");
-		myShipXYWH_AtThat[0] = myShipXY[0];
-		myShipXYWH_AtThat[1] = myShipXY[1];
-		myShipXYWH_AtThat[2] = myShipSize[0];
-		myShipXYWH_AtThat[3] = myShipSize[1];
-		tamaMOVE[0] = 0;
-		tamaMOVE[1] = 0;
+		//弾を撃った瞬間の自機の位置を弾の初期位置に設定
+		for (int i=0; i<4; i++) MyShipXYWH_AtThat[i] = myShipXYWH[i];
+		//動きをリセット
+		MyBulletXY_Move[0] = 0;
+		MyBulletXY_Move[1] = 0;
 	}
 	
-	/**************************
+	/****************************************************
 	 * 自分の弾を生成する関数
-	 **************************/
-	void drawMyShipTama (Graphics gBuf2) {
-//		System.out.println("動作てすと: DrawMyBullet/drawShipTama");
-		gBuf2.drawImage(img_tama, 
-				myShipXYWH_AtThat[0]+myShipXYWH_AtThat[2]/2/*これで真ん中から発射*/+tamaMOVE[0], myShipXYWH_AtThat[1]+tamaMOVE[1],
-				img_tamaSize[0], img_tamaSize[1], this);
-		tamaMOVE[1] -= 4;
+	 ****************************************************/
+	void drawMyBullet (Graphics gBuf2) {
+//		System.out.println("動作てすと: DrawMyBullet/drawMyBullet");
+		
+		//Y座標の動き
+		MyBulletXY_Move[1] -= MY_BULLET_SPEED;
+		//描画
+		gBuf2.drawImage(MyBullet_img, 
+				MyShipXYWH_AtThat[0]+MyShipXYWH_AtThat[2]/2+MyBulletXY_Move[0], MyShipXYWH_AtThat[1]+MyBulletXY_Move[1],
+				MyBullet_imgSize[0], MyBullet_imgSize[1], this);
 	}
 	
-	/**************************
-	 * 別クラスから自機の弾の位置と大きさを取得できるようにする関数
-	 **************************/
-	public int[] getTamaXYWH() {
-		int[] temp = {myShipXYWH_AtThat[0]+tamaMOVE[0], myShipXYWH_AtThat[1]+tamaMOVE[1], img_tamaSize[0], img_tamaSize[1]};
-		return temp;
+	/****************************************************
+	 * 別クラスから自機の弾の位置と大きさを取得する為の関数
+	 ****************************************************/
+	public int[] getMyBulletXYWH() {
+		int[] tempXYWH = {
+				MyShipXYWH_AtThat[0]+MyBulletXY_Move[0], MyShipXYWH_AtThat[1]+MyBulletXY_Move[1],
+				MyBullet_imgSize[0], MyBullet_imgSize[1]};
+		return tempXYWH;
 	}
 }
 

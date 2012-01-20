@@ -6,159 +6,178 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 
-/* ---ƒ^ƒXƒNƒŠƒXƒg---
- * E“G‚à’e‚ğŒ‚‚Â‚æ‚¤‚É
+/* ---ã‚¿ã‚¹ã‚¯ãƒªã‚¹ãƒˆ---
+ * ãƒ»æ•µã‚‚å¼¾ã‚’æ’ƒã¤ã‚ˆã†ã«
  * 
- * E“G‚Ì“®‚«‚Ìƒ^ƒCƒv‚ÌƒoƒŠƒG[ƒVƒ‡ƒ“
- * E‘S‘Ì“I‚É‰æ‘œ‚ª‚Ç‚ê‚à‘å‚«‚¢‚©‚ç‚¿‚å‚Á‚Æ‚¸‚Â¬‚³‚­‚·‚é
- * E“G&“G’e‚ÌÀ‘•
- * E“®‚«‚É‡‚í‚¹‚Ä”wŒi‚à­‚µˆÚ“®
- * E”š’e‚Æ‚©
- * Eˆê’â~
- * Ec‚è‹@”‚ÌŠT”O
- * E‘Ì—ÍƒQ[ƒW‚ÌŠT”O
+ * ãƒ»æ•µã®å‹•ãã®ã‚¿ã‚¤ãƒ—ã®ãƒãƒªã‚¨ãƒ¼ã‚·ãƒ§ãƒ³
+ * ãƒ»å…¨ä½“çš„ã«ç”»åƒãŒã©ã‚Œã‚‚å¤§ãã„ã‹ã‚‰ã¡ã‚‡ã£ã¨ãšã¤å°ã•ãã™ã‚‹
+ * ãƒ»æ•µ&æ•µå¼¾ã®å®Ÿè£…
+ * ãƒ»å‹•ãã«åˆã‚ã›ã¦èƒŒæ™¯ã‚‚å°‘ã—ç§»å‹•
+ * ãƒ»çˆ†å¼¾ã¨ã‹
+ * ãƒ»ä¸€æ™‚åœæ­¢
+ * ãƒ»æ®‹ã‚Šæ©Ÿæ•°ã®æ¦‚å¿µ
+ * ãƒ»ä½“åŠ›ã‚²ãƒ¼ã‚¸ã®æ¦‚å¿µ
  */
 
 public class MyCanvas extends Canvas implements Runnable {
 	/****************************************************
-	 * •Ï”‚Æ‚©ƒNƒ‰ƒX
+	 * å¤‰æ•°ã¨ã‹ã‚¯ãƒ©ã‚¹
 	 ****************************************************/
-	/*----ƒQ[ƒ€‘S‘Ì‚ÉŠÖ‚í‚é•Ï”----*/
-	//ŠÔŒo‰ßƒJƒEƒ“ƒg
-	int counter;
-	//ƒQ[ƒ€ƒXƒRƒA‚ÆÅ‚ƒXƒRƒA
-	public int score;
-	public int score_max;
-	public int level;
-	//ƒQ[ƒ€‚Ìƒ‚[ƒh‚Æ#define
-	int gameSceneSelecter;
-	static final int GAME_TITLE = 0;
-	static final int GAME_MAINGAME = 1;
-	static final int GAME_GAMEOVER = 2;
-	/*----ƒEƒBƒ“ƒhƒE‚Æ‚©•`‰æŠÖŒW----*/
-	//ƒEƒBƒ“ƒhƒEƒTƒCƒY‚Æ”wŒi
-	static final int WIDTH = 480;
-	static final int HEIGHT = 700;
-	static final int GAMESPEED = 15; //•`‰æƒ‹[ƒv‚ÌŠÔŠu(15ƒ~ƒŠ•b=0.015•b)
-	//•`‰æŠÖŒW
-	Image imgBuf;
-	Graphics gBuf;
-	Font titleFont = new Font("SansSerif", Font.BOLD, 28); //SansSerif
-	Font subtitleFont = new Font("SansSerif", Font.PLAIN, 16); //SansSerif
-	Font scoreFont = new Font("popstarregular", Font.PLAIN, 12);
-	/*----‚»‚Ì‘¼‚ÌƒNƒ‰ƒX‚Æ‚©•Ï”----*/
-	//”wŒi‰æ‘œ
-	Image background_img;
-	//ƒL[ŠÄ‹ƒNƒ‰ƒX
-	KeyboardListener keyboard;
-	//“GƒNƒ‰ƒX
-	static final int ENEMY_MAX = 80; //“G‚ÌÅ‘å”
-	DrawEnemyShip[] EnemyShip;
-	boolean enemyVisible[] = new boolean[ENEMY_MAX];
-	int enemy_count;
-	int[] temp_enemyXYWH = new int[ENEMY_MAX];
-	//©•ª‚Ì’eƒNƒ‰ƒX
-	static final int TAMA_MAX = 100; //©•ª‚ªˆê‹C‚ÉŒ‚‚Ä‚é’e‚ÌÅ‘å”
-	DrawMyBullet[] drawMyBullet;
-	boolean tamaVisible[] = new boolean[TAMA_MAX];
-	int tama_count;
-	int[] tama_temp = new int[TAMA_MAX];
-	//”š”­¶¬ƒNƒ‰ƒX
-	static final int EXPLOSION_MAX = 40; //”š”­‚ÌÅ‘å”
-	CreateExplosion[] createExplosion;
-	boolean ExplosionVisible[] = new boolean[EXPLOSION_MAX];
-	int explosion_count;
-	//©‹@ŠÖŒW
-	static final int MOVE = 4; //©‹@‚Ì“®‚­‹——£(‘¬‚³)‚Ìw’è
-	int[] myShipXY = {200, 500}; //©‹@‚ÌÀ•W(200,400)
-	int[] myShipSize = {162/3, 210/3}; //©‹@‚Ì‘å‚«‚³(©“®æ“¾‚µ‚½‚¢‚¯‚Ç•ª‚©‚ç‚È‚¢‚©‚çæ‚èŠ¸‚¦‚¸)
-	Image img_myShip; //©‹@‰æ‘œ(‘fŞ-> http://maglog.jp/layer79ray97/Article1191293.html)
-	
+	/*----ã‚²ãƒ¼ãƒ å…¨ä½“ã«é–¢ã‚ã‚‹å¤‰æ•°----*/
+		//æ™‚é–“çµŒéã‚«ã‚¦ãƒ³ãƒˆ
+		int counter;
+		//ã‚²ãƒ¼ãƒ ã‚¹ã‚³ã‚¢ã¨æœ€é«˜ã‚¹ã‚³ã‚¢
+		public int score;
+		public int score_max;
+		public int level;
+		//ã‚²ãƒ¼ãƒ ã®ãƒ¢ãƒ¼ãƒ‰ã¨#define
+		int gameSceneSelecter;
+		static final int GAME_TITLE = 0;
+		static final int GAME_MAINGAME = 1;
+		static final int GAME_GAMEOVER = 2;
+	/*----ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã¨ã‹æç”»é–¢ä¿‚----*/
+		//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚µã‚¤ã‚ºã¨ã‚²ãƒ¼ãƒ ã‚¹ãƒ”ãƒ¼ãƒ‰ã®è¨­å®š
+		static final int WIDTH = 480;
+		static final int HEIGHT = 700;
+		static final int GAMESPEED = 15; //æç”»ãƒ«ãƒ¼ãƒ—ã®é–“éš”(15ãƒŸãƒªç§’=0.015ç§’)
+		//æç”»é–¢ä¿‚
+		Image imgBuf;
+		Graphics gBuf;
+		Font titleFont = new Font("SansSerif", Font.BOLD, 28); //SansSerif
+		Font subtitleFont = new Font("SansSerif", Font.PLAIN, 16); //SansSerif
+		Font scoreFont = new Font("popstarregular", Font.PLAIN, 12);
+	/*----ãã®ä»–ã®ã‚¯ãƒ©ã‚¹ã¨ã‹å¤‰æ•°----*/
+		//èƒŒæ™¯ç”»åƒ
+		Image background_img;
+		//ã‚­ãƒ¼ç›£è¦–ã‚¯ãƒ©ã‚¹
+		KeyboardListener keyboard;
+		//è‡ªæ©Ÿã‚¯ãƒ©ã‚¹
+		DrawMyShip myShip;
+		boolean myShip_Visible;
+		int[] myShipXYWH_temp; //åº§æ¨™ä¸€æ™‚ä¿ç®¡ç”¨
+		//æ•µæ©Ÿã‚¯ãƒ©ã‚¹
+		static final int ENEMY_SHIP_MAX = 80; //æ•µã®æœ€å¤§æ•°
+		DrawEnemyShip[] enemyShip;
+		boolean enemyShip_Visible[] = new boolean[ENEMY_SHIP_MAX];
+		int enemyShip_count;
+		int[] enemyShipXYWH_temp = new int[ENEMY_SHIP_MAX]; //åº§æ¨™ä¸€æ™‚ä¿ç®¡ç”¨
+		//è‡ªåˆ†ã®å¼¾ã‚¯ãƒ©ã‚¹
+		static final int MY_BULLET_MAX = 100; //è‡ªåˆ†ãŒä¸€æ°—ã«æ’ƒã¦ã‚‹å¼¾ã®æœ€å¤§æ•°
+		DrawMyBullet[] drawMyBullet;
+		boolean myBullet_Visible[] = new boolean[MY_BULLET_MAX];
+		int myBullet_count;
+		int[] myBulletXYWH_temp = new int[MY_BULLET_MAX]; //åº§æ¨™ä¸€æ™‚ä¿ç®¡ç”¨
+		//æ•µã®å¼¾ã‚¯ãƒ©ã‚¹
+			////
+		//çˆ†ç™ºç”Ÿæˆã‚¯ãƒ©ã‚¹
+		static final int EXPLOSION_MAX = 40; //çˆ†ç™ºã®æœ€å¤§æ•°
+		CreateExplosion[] createExplosion;
+		boolean ExplosionVisible[] = new boolean[EXPLOSION_MAX];
+		int explosion_count;
+		
+	/*
+	//è‡ªæ©Ÿé–¢ä¿‚
+	static final int MOVE = 4; //è‡ªæ©Ÿã®å‹•ãè·é›¢(é€Ÿã•)ã®æŒ‡å®š
+	int[] myShipXY = {200, 500}; //è‡ªæ©Ÿã®åº§æ¨™(200,400)
+	int[] myShipSize = {162/3, 210/3}; //è‡ªæ©Ÿã®å¤§ãã•(è‡ªå‹•å–å¾—ã—ãŸã„ã‘ã©åˆ†ã‹ã‚‰ãªã„ã‹ã‚‰å–ã‚Šæ•¢ãˆãš)
+	Image img_myShip; //è‡ªæ©Ÿç”»åƒ(ç´ æ-> http://maglog.jp/layer79ray97/Article1191293.html)
+	*/
 	
 	/****************************************************
-	 * ƒRƒXƒgƒ‰ƒNƒ^
+	 * ã‚³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	 ****************************************************/
 	MyCanvas() {
 		int i;
-		//ƒL[“ü—ÍƒNƒ‰ƒX
+		//ã‚­ãƒ¼å…¥åŠ›ã‚¯ãƒ©ã‚¹
 		keyboard = new KeyboardListener();
 		addKeyListener(keyboard);
-		//“GƒNƒ‰ƒX(æ‚èŠ¸‚¦‚¸1ŒÂ¨—ÊY‰Â”\‚É)
-		EnemyShip = new DrawEnemyShip[ENEMY_MAX];
-		for (i=0; i<ENEMY_MAX; i++) EnemyShip[i] = new DrawEnemyShip();
-		enemy_count = 0;
-		//”š”­¶¬ƒNƒ‰ƒX(”š”­‚ÍEXPLOSION_MAXŒÂ‚Ü‚Åˆê‹C‚É‹N‚±‚é)
+		//è‡ªæ©Ÿã‚¯ãƒ©ã‚¹
+		myShip = new DrawMyShip();
+		//æ•µæ©Ÿã‚¯ãƒ©ã‚¹
+		enemyShip = new DrawEnemyShip[ENEMY_SHIP_MAX];
+		for (i=0; i<ENEMY_SHIP_MAX; i++) enemyShip[i] = new DrawEnemyShip();
+		enemyShip_count = 0;
+		//çˆ†ç™ºç”Ÿæˆã‚¯ãƒ©ã‚¹
 		createExplosion = new CreateExplosion[EXPLOSION_MAX];
 		for (i=0; i<EXPLOSION_MAX; i++) createExplosion[i] = new CreateExplosion();
 		explosion_count = 0;
-		//©•ª‚Ì’eƒNƒ‰ƒX(’e‚ÍTAMA_MAX”­‚Ü‚Åˆê‹C‚ÉŒ‚‚Ä‚é)
-		drawMyBullet = new DrawMyBullet[TAMA_MAX];
-		for (i=0; i<TAMA_MAX; i++) drawMyBullet[i] = new DrawMyBullet();
-		tama_count = 0;
-		//“G‚Ì’eƒNƒ‰ƒX
-		
+		//è‡ªåˆ†ã®å¼¾ã‚¯ãƒ©ã‚¹
+		drawMyBullet = new DrawMyBullet[MY_BULLET_MAX];
+		for (i=0; i<MY_BULLET_MAX; i++) drawMyBullet[i] = new DrawMyBullet();
+		myBullet_count = 0;
+		//æ•µã®å¼¾ã‚¯ãƒ©ã‚¹
+			////
 	}
 
 	/****************************************************
-	 * •Ï”‚ğ‰Šú‰»‚·‚éŠÖ”(ƒQ[ƒ€ƒXƒ^[ƒg‚ÉÀs)
+	 * å¤‰æ•°ã‚’åˆæœŸåŒ–ã™ã‚‹é–¢æ•°(ã‚²ãƒ¼ãƒ ã‚¹ã‚¿ãƒ¼ãƒˆæ™‚ã«å®Ÿè¡Œ)
 	 ****************************************************/
 	public void init() {
-		int a;
+		int i; //(ãƒ«ãƒ¼ãƒ—ç”¨)
+		
 		gameSceneSelecter = GAME_TITLE;
-		score = 0; //ƒQ[ƒ€ƒXƒRƒA
-		level = 0;
+		score = 0; //ã‚²ãƒ¼ãƒ ã‚¹ã‚³ã‚¢
+		level = 0; //ãƒ¬ãƒ™ãƒ«
 		
-		//“G‹@‚ÌˆÊ’u‚È‚Ç‚ÌƒŠƒZƒbƒg
-		for (a=0; a<ENEMY_MAX; a++) {
-			enemyVisible[a] = false;
-			EnemyShip[a].init();
+		//è‡ªæ©Ÿã®ä½ç½®ã¨è¡¨ç¤ºã‚’ãƒªã‚»ãƒƒãƒˆ
+		myShip.init();
+		myShip_Visible = true;
+		
+		//æ•µæ©Ÿã®ä½ç½®ã¨è¡¨ç¤ºã‚’ãƒªã‚»ãƒƒãƒˆ
+		for (i=0; i<ENEMY_SHIP_MAX; i++) {
+			enemyShip[i].init();
+			enemyShip_Visible[i] = false;
 		}
 		
-		//’e‚ğ•\¦‚ÆˆÊ’u‚ğƒŠƒZƒbƒg
-		for (a=0; a<TAMA_MAX; a++) {
-			tamaVisible[a] = false;
-			drawMyBullet[a].init();
+		//è‡ªåˆ†ã®å¼¾ã‚’ä½ç½®ã¨è¡¨ç¤ºã‚’ãƒªã‚»ãƒƒãƒˆ
+		for (i=0; i<MY_BULLET_MAX; i++) {
+			drawMyBullet[i].init();
+			myBullet_Visible[i] = false;
 		}
 		
-		//”š”­‚ğƒŠƒZƒbƒg
-		for (a=0; a<EXPLOSION_MAX; a++) ExplosionVisible[a] = false;
+		//æ•µã®å¼¾ã‚’ä½ç½®ã¨è¡¨ç¤ºã‚’ãƒªã‚»ãƒƒãƒˆ
+			////
 		
-		/* ‰æ‘œ‚Ì“Ç‚İ‚İ */
-		background_img = getToolkit().getImage("img/back01@x480y720.jpg"); //”wŒi
-		img_myShip = getToolkit().getImage("img/myship@x162y210.png"); //©‹@
+		//çˆ†ç™ºã®è¡¨ç¤ºã‚’ãƒªã‚»ãƒƒãƒˆ
+		for (i=0; i<EXPLOSION_MAX; i++) {
+			ExplosionVisible[i] = false;
+		}
+		
+		//ç”»åƒã®èª­ã¿è¾¼ã¿
+		background_img = getToolkit().getImage("img/back01@x480y720.jpg"); //èƒŒæ™¯ç”»åƒ
 	}
 	
-	//ƒXƒŒƒbƒh‚ğ‰Šú‰»‚·‚éŠÖ”
+	//ã‚¹ãƒ¬ãƒƒãƒ‰ã‚’åˆæœŸåŒ–ã™ã‚‹é–¢æ•°
 	public void initThread() {
 		Thread thread = new Thread(this);
 		thread.start();
-		System.out.println("“®ì‚Ä‚·‚Æ: MyCanvas/initThread");
+		System.out.println("å‹•ä½œã¦ã™ã¨: MyCanvas/initThread");
 	}
 	
 	
 	/****************************************************
-	 * ƒXƒŒƒbƒh(ƒƒCƒ“ƒ‹[ƒv)
+	 * ã‚¹ãƒ¬ãƒƒãƒ‰(ãƒ¡ã‚¤ãƒ³ãƒ«ãƒ¼ãƒ—)
 	 ****************************************************/
 	@Override
 	public void run() {
-		//•`‰æ‚Ì‚¿‚ç‚Â‚«–h~‚Ì‚½‚ßAƒ_ƒuƒ‹ƒoƒbƒtƒ@ƒŠƒ“ƒOˆ—
+		//æç”»ã®ã¡ã‚‰ã¤ãé˜²æ­¢ã®ãŸã‚ã€ãƒ€ãƒ–ãƒ«ãƒãƒƒãƒ•ã‚¡ãƒªãƒ³ã‚°å‡¦ç†
 		//(URL: http://hp.vector.co.jp/authors/VA012735/java/dbuf1.htm)
-		imgBuf = createImage(480, 700); //‚±‚ê‚ªƒIƒtƒXƒNƒŠ[ƒ“ƒoƒbƒtƒ@(?)
+		imgBuf = createImage(480, 700); //ã“ã‚ŒãŒã‚ªãƒ•ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ãƒãƒƒãƒ•ã‚¡(?)
 		gBuf = imgBuf.getGraphics();
 		
-		//‚±‚±‚ÅFX‚Æ•`‰æ
+		//ã“ã“ã§è‰²ã€…ã¨æç”»
 		for (counter = 0; ; counter++) {			
-			//ƒoƒbƒtƒ@‚ğ”’‚Å“h‚è‚Â‚Ô‚µ‚ÄƒNƒŠƒA
+			//ãƒãƒƒãƒ•ã‚¡ã‚’ç™½ã§å¡—ã‚Šã¤ã¶ã—ã¦ã‚¯ãƒªã‚¢
 			gBuf.setColor(Color.white);
-			gBuf.fillRect(0,0,480,700);
+			gBuf.fillRect(0, 0, 480, 700);
 			
-			//ƒQ[ƒ€‰æ–Ê‚ğ•`‰æ
+			//ã‚²ãƒ¼ãƒ ç”»é¢ã‚’æç”»
 			gameScene();
 			
-			//Ä•`‰æ
+			//å†æç”»
 			repaint();
 			
-			//ƒ‹[ƒv‚ÌŠÔŠu(20ƒ~ƒŠ•b=0.02•b)
+			//ãƒ«ãƒ¼ãƒ—ã®é–“éš”(20ãƒŸãƒªç§’=0.02ç§’)
 			try {
 				Thread.sleep(GAMESPEED);
 			} catch(InterruptedException e) {}
@@ -166,173 +185,167 @@ public class MyCanvas extends Canvas implements Runnable {
 	}
 	
 	/****************************************************
-	 * •`‰æ§ŒäŒn‚ÌŠÖ”
+	 * æç”»åˆ¶å¾¡ç³»ã®é–¢æ•°
 	 ****************************************************/
-	//ƒoƒbƒtƒ@‚ğ‰æ–Ê‚É•`‰æ‚·‚é
+	//ãƒãƒƒãƒ•ã‚¡ã‚’ç”»é¢ã«æç”»ã™ã‚‹
 	@Override
 	public void paint(Graphics g) {
-		g.drawImage(imgBuf, 0, 0, this); //À•W(0,0)‚ÌˆÊ’u‚Éƒoƒbƒtƒ@‚ğ•`‚­
+		g.drawImage(imgBuf, 0, 0, this); //åº§æ¨™(0,0)ã®ä½ç½®ã«ãƒãƒƒãƒ•ã‚¡ã‚’æã
 	}
 	
-	//repaint‚Ìupdateƒƒ\ƒbƒh‚ªŒÄ‚Ño‚³‚ê‚é‚Æ‰æ–Ê‚ªˆê’U”wŒiF‚Å“h‚è‚Â‚Ô‚µ‚Ä‚µ‚Ü‚¢‰æ–Ê‚ª‚¿‚ç‚Â‚­‚Ì‚ÅA
-	//‚»‚ê‚ğ–h~‚·‚é‚½‚ß‚É‚±‚ê‚ğƒI[ƒo[ƒ‰ƒCƒh‚µ‚Äpaintƒƒ\ƒbƒh‚ÉˆÚs(?)
+	//repaintæ™‚ã®updateãƒ¡ã‚½ãƒƒãƒ‰ãŒå‘¼ã³å‡ºã•ã‚Œã‚‹ã¨ç”»é¢ãŒä¸€æ—¦èƒŒæ™¯è‰²ã§å¡—ã‚Šã¤ã¶ã—ã¦ã—ã¾ã„ç”»é¢ãŒã¡ã‚‰ã¤ãã®ã§ã€
+	//ãã‚Œã‚’é˜²æ­¢ã™ã‚‹ãŸã‚ã«ã“ã‚Œã‚’ã‚ªãƒ¼ãƒãƒ¼ãƒ©ã‚¤ãƒ‰ã—ã¦paintãƒ¡ã‚½ãƒƒãƒ‰ã«ç§»è¡Œ(?)
 	@Override
 	public void update(Graphics g) {
 		paint(g);
 	}
 	
 	/****************************************************
-	 * ƒQ[ƒ€ó‹µ‚Ì•ÏX‚É‚ ‚í‚¹‚Ä•`‰æ‚ğ‚·‚éŠÖ”
-	 * (ƒL[“ü—Í‚ÅƒQ[ƒ€ó‹µ‚Ì•ÏX‚à§Œä‚·‚é)
+	 * ã‚²ãƒ¼ãƒ çŠ¶æ³ã®å¤‰æ›´ã«ã‚ã‚ã›ã¦æç”»ã‚’ã™ã‚‹é–¢æ•°
+	 * (ã‚­ãƒ¼å…¥åŠ›ã§ã‚²ãƒ¼ãƒ çŠ¶æ³ã®å¤‰æ›´ã‚‚åˆ¶å¾¡ã™ã‚‹)
 	 ****************************************************/
 	void gameScene() {
-		//”wŒiƒŒƒCƒ„[‚ğ•`‰æ
+		//èƒŒæ™¯ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’æç”»
 		drawBackGround(gBuf);
-		//ƒQ[ƒ€‚Ì“à—e‚ğ•`‰æ
+		//ã‚²ãƒ¼ãƒ ã®å†…å®¹ã‚’æç”»
 		switch (gameSceneSelecter) {
 			case GAME_TITLE:
-				//SpaceƒL[‚ÅŠJn(GAME_MAINGAME‚Ö)
+				//Spaceã‚­ãƒ¼ã§é–‹å§‹(GAME_MAINGAMEã¸)
 				if (keyboard.SpaceKeyListener() != 0) gameSceneSelecter = GAME_MAINGAME;
 				drawTitle(gBuf); break;
 			case GAME_MAINGAME:
-				//EscapeƒL[‚Å—£’E(GAME_TITLE‚Ö)
-				if (keyboard.EscapeKeyListener() == 1) init(); //ƒQ[ƒ€‚ğ‰Šú‰»
+				//Escapeã‚­ãƒ¼ã§é›¢è„±(GAME_TITLEã¸)
+				if (keyboard.EscapeKeyListener() == 1) init(); //ã‚²ãƒ¼ãƒ ã‚’åˆæœŸåŒ–
 				drawMainGame(gBuf);	break;
 			case GAME_GAMEOVER:
-				//SpaceƒL[‚ÅƒŠƒZƒbƒg(GAME_TITLE‚Ö)
-				if (keyboard.EscapeKeyListener() == 1) init(); //(Å‚ƒXƒRƒA‚ğ‹L˜^‚µA)ƒQ[ƒ€‚ğ‰Šú‰»
+				//Spaceã‚­ãƒ¼ã§ãƒªã‚»ãƒƒãƒˆ(GAME_TITLEã¸)
+				if (keyboard.EscapeKeyListener() == 1) init(); //ã‚²ãƒ¼ãƒ ã‚’åˆæœŸåŒ–
 				drawGameOver(gBuf);	break;
 		}
-		//ƒXƒRƒA‚ÆƒŒƒxƒ‹‚ÌƒŒƒCƒ„[‚ğ•`‰æ
+		//ã‚¹ã‚³ã‚¢ã¨ãƒ¬ãƒ™ãƒ«ã®ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’æç”»
 		drawScore(gBuf);
 	}
 	
 	/****************************************************
-	 * ”wŒi‚ğ•`‰æ‚·‚éŠÖ”
+	 * èƒŒæ™¯ã‚’æç”»ã™ã‚‹é–¢æ•°
 	 ****************************************************/
 	private void drawBackGround(Graphics gBuf2) {
 		gBuf2.drawImage(background_img, 0, 0, 480, 720, this);
 	}
 	
 	/****************************************************
-	 * ƒXƒRƒA‚ÆƒŒƒxƒ‹‚ğ•`‰æ‚·‚éŠÖ”
+	 * ã‚¹ã‚³ã‚¢ã¨ãƒ¬ãƒ™ãƒ«ã‚’æç”»ã™ã‚‹é–¢æ•°
 	 ****************************************************/
 	private void drawScore(Graphics gBuf2) {
 		gBuf2.setFont(scoreFont);
 		gBuf2.setColor(Color.white);
-		gBuf2.drawString("CREDITS: "+score_max, 345, 24); //‰æ–Ê‰Eã‚ÉÅ‚ƒXƒRƒA‚ğ•`‰æ
-		gBuf2.drawString("SCORE: "+score, 358, 44); //‰æ–Ê‰Eã‚ÉƒQ[ƒ€ƒXƒRƒA‚ğ•`‰æ
-		gBuf2.drawString("LEVEL: "+level, 10, 24); //‰æ–Ê¶ã‚ÉƒŒƒxƒ‹‚ğ•`‰æ
+		gBuf2.drawString("CREDITS: "+score_max, 345, 24); //ç”»é¢å³ä¸Šã«æœ€é«˜ã‚¹ã‚³ã‚¢ã‚’æç”»
+		gBuf2.drawString("SCORE: "+score, 358, 44); //ç”»é¢å³ä¸Šã«ã‚²ãƒ¼ãƒ ã‚¹ã‚³ã‚¢ã‚’æç”»
+		gBuf2.drawString("LEVEL: "+level, 10, 24); //ç”»é¢å·¦ä¸Šã«ãƒ¬ãƒ™ãƒ«ã‚’æç”»
 		
-		gBuf2.drawString("counter: "+counter, 10, 680); //ƒJƒEƒ“ƒ^[
+		gBuf2.drawString("counter: "+counter, 10, 680); //ã‚«ã‚¦ãƒ³ã‚¿ãƒ¼
 	}
 
 	/****************************************************
-	 * ƒQ[ƒ€‚Ì“à—e‚ğ•`‰æ‚·‚éŠÖ”ŒQ(ƒV[ƒ“•Ê)
+	 * ã‚²ãƒ¼ãƒ ã®å†…å®¹ã‚’æç”»ã™ã‚‹é–¢æ•°ç¾¤(ã‚·ãƒ¼ãƒ³åˆ¥)
 	 ****************************************************/
 	/*--------------------------------------------------
-	 * ƒQ[ƒ€ƒ^ƒCƒgƒ‹
+	 * ã‚²ãƒ¼ãƒ ã‚¿ã‚¤ãƒˆãƒ«
 	 *-------------------------------------------------*/
 	private void drawTitle(Graphics gBuf2) {
 		gBuf2.setColor(Color.white);
 		
-//		String s1 = String.valueOf(keyboard.SpaceKeyListener()); //ƒfƒoƒbƒO—p
+//		String s1 = String.valueOf(keyboard.SpaceKeyListener()); //ãƒ‡ãƒãƒƒã‚°ç”¨
 		
 		gBuf2.setFont(titleFont);
-		gBuf2.drawString("ƒVƒ…[ƒeƒBƒ“ƒOì‚Á‚Ä‚İ‚½", 65, 230);
+		gBuf2.drawString("ã‚·ãƒ¥ãƒ¼ãƒ†ã‚£ãƒ³ã‚°ä½œã£ã¦ã¿ãŸ", 65, 230);
 		gBuf2.setFont(subtitleFont);
-//		gBuf2.drawString("(counter=" + counter + ")", 175, 220); //ƒJƒEƒ“ƒ^[‚Ìo—Í
-//		gBuf2.drawString(s1, 160, 300); //ƒfƒoƒbƒO—p
+//		gBuf2.drawString("(counter=" + counter + ")", 175, 220); //ã‚«ã‚¦ãƒ³ã‚¿ãƒ¼ã®å‡ºåŠ›
+//		gBuf2.drawString(s1, 160, 300); //ãƒ‡ãƒãƒƒã‚°ç”¨
 		
-		//"Press Space Key"‚Ìo—Í
+		//"Press Space Key"ã®å‡ºåŠ›
 		gBuf2.setFont(subtitleFont);
 		gBuf2.drawString("Press Space Key", 175, 500);
-		//(ƒhƒbƒg‚ğ“_–Å)
+		//(ãƒ‰ãƒƒãƒˆã‚’ç‚¹æ»…)
 		if (counter%300 <= 100) gBuf2.drawString(".", 300, 500);
 		else if (counter%300 <= 200) gBuf2.drawString("..", 300, 500);
 		else gBuf2.drawString("...", 300, 500);
 	}
 	
 	/*--------------------------------------------------
-	 * ƒƒCƒ“ƒQ[ƒ€
+	 * ãƒ¡ã‚¤ãƒ³ã‚²ãƒ¼ãƒ 
 	 *-------------------------------------------------*/
 	private void drawMainGame(Graphics gBuf2) {
 		int i;
-		/* ƒvƒŒƒCƒ„[‚ÌˆÊ’u‚ğˆÚ“® */
+		int[] myShipXYWH = new int[4];
+		myShipXYWH = myShip.getMyShipXYWH();
 		
-		//¶‰EˆÚ“®(’[‚És‚Á‚½‚ç‹t‚©‚çƒ‹[ƒv) ¨(’[‚És‚Á‚½‚çƒXƒgƒbƒv)‚É•ÏX
-		if (keyboard.LeftRightListener() == -1) {
-			if (myShipXY[0] >= MOVE) myShipXY[0] -= MOVE;
-		} else if (keyboard.LeftRightListener() == 1) {
-			if (myShipXY[0] <= WIDTH-myShipSize[0]-MOVE) myShipXY[0] += MOVE;
-		}
-		//ã‰ºˆÚ“®(’[‚És‚Á‚½‚çƒXƒgƒbƒv)
-		if (keyboard.UpDownListener() == -1) {
-			if (myShipXY[1] >= MOVE) myShipXY[1] -= MOVE;
-		} else if (keyboard.UpDownListener() == 1) {
-			if (myShipXY[1] <= HEIGHT-myShipSize[1]-MOVE) myShipXY[1] += MOVE;
-		}
+		/**** è‡ªæ©Ÿã®æç”» ****/
+		//è‡ªæ©Ÿã®ä½ç½®ã‚’ç§»å‹•ã—ã€æç”»
+		myShip.moveMyShip(keyboard.LeftRightListener(), keyboard.UpDownListener());
+		myShip.drawMyShip(gBuf2);
 		
-		//ƒvƒŒƒCƒ„[‚ğ•`‰æ
-		gBuf2.drawImage(img_myShip, myShipXY[0], myShipXY[1], myShipSize[0], myShipSize[1], this);
-		
-		
-		//“G‚ğƒ‰ƒ“ƒ_ƒ€‚É¶¬‚·‚é
+		/**** æ•µæ©Ÿã®æç”» ****/
+		//æ•µæ©Ÿã‚’ãƒ©ãƒ³ãƒ€ãƒ ã«ç”Ÿæˆ(ã‚„ã‚‰ã‚ŒãŸæ•µã¯è‡ªç„¶ã«è¡¨ç¤ºãŒfalseã«ãªã‚‹)
 		if (counter%24 == 0) {
-			EnemyShip[enemy_count].init();
-			enemyVisible[enemy_count] = true;
-			
-			enemy_count++;
-			if (enemy_count == ENEMY_MAX) enemy_count = 0;
-		} //(‚â‚ç‚ê‚½“G‚Í©‘R‚É•\¦‚ªfalse‚É)
-		//‰æ–ÊŠO(‰º)‚Éo‚½“G‚Í”ñ•\¦‚É
-		for (i=0; i<ENEMY_MAX; i++) {
-			if (enemyVisible[i] == true) {
-				temp_enemyXYWH = EnemyShip[i].getEnemyShip_XYWH(); 
-				if (temp_enemyXYWH[1] > HEIGHT) enemyVisible[i] = false;
+			enemyShip[enemyShip_count].init();
+			enemyShip_Visible[enemyShip_count] = true;
+			enemyShip_count++;
+			//æ•µæ©Ÿã‚¯ãƒ©ã‚¹ã®ä¸Šé™æ•°ã«é”ã—ãŸã‚‰0ã«æˆ»ã™
+			if (enemyShip_count == ENEMY_SHIP_MAX) enemyShip_count = 0;
+		}
+		//ç”»é¢å¤–(ä¸‹)ã«å‡ºãŸæ•µæ©Ÿã¯è¡¨ç¤ºã‚’æ­¢ã‚ã‚‹
+		for (i=0; i<ENEMY_SHIP_MAX; i++) {
+			if (enemyShip_Visible[i] == true) {
+				enemyShipXYWH_temp = enemyShip[i].getEnemyShip_XYWH(); 
+				if (enemyShipXYWH_temp[1] > HEIGHT) enemyShip_Visible[i] = false;
 			}
 		}
-			
-		//“G‚ğ•`‰æ
-		for (i=0; i<ENEMY_MAX; i++) if (enemyVisible[i] == true) EnemyShip[i].enemyDraw(gBuf2);
-
-		//ƒXƒy[ƒXƒL[‚Å’e‚ğ”­Ë
-		if (keyboard.SpaceKeyListener() == 1) { //SpaceƒL[‰Ÿ‰º
-			if (counter%7 == 0) { //˜AË‚µ‚·‚¬–h~‚Ì‚½‚ßAƒJƒEƒ“ƒ^[‚ª8‚Ì”{”‚Ì‚¾‚¯”­ËB
-				drawMyBullet[tama_count].init(myShipXY, myShipSize); //Œ»İ‚ÌˆÊ’u‚©‚ç’e‚ª“®‚«o‚·
-				tamaVisible[tama_count] = true; //•\¦‚ğ—LŒø‰»
-				tama_count++;
-				
-				//’e‚ª¶¬‚µ‚½’eƒNƒ‰ƒX‚ÌãŒÀ‚É’B‚µ‚½‚ç0‚É–ß‚·
-				if (tama_count == TAMA_MAX-1) tama_count = 0;
+		//æ•µæ©Ÿã‚’æç”»
+		for (i=0; i<ENEMY_SHIP_MAX; i++) if (enemyShip_Visible[i] == true) enemyShip[i].enemyDraw(gBuf2);
+		
+		/**** è‡ªåˆ†ã®å¼¾ã®æç”» ****/
+		//ã‚¹ãƒšãƒ¼ã‚¹ã‚­ãƒ¼ã§è‡ªåˆ†ã®å¼¾ã‚’ç™ºå°„
+		if (keyboard.SpaceKeyListener() == 1) { //Spaceã‚­ãƒ¼æŠ¼ä¸‹æ™‚
+			if (counter%7 == 0) { //é€£å°„ã—ã™ãé˜²æ­¢ã®ãŸã‚ã€ã‚«ã‚¦ãƒ³ã‚¿ãƒ¼ãŒ8ã®å€æ•°ã®æ™‚ã ã‘ç™ºå°„ã€‚
+				drawMyBullet[myBullet_count].init(myShipXYWH); //ç¾åœ¨ã®ä½ç½®ã‹ã‚‰å¼¾ãŒå‹•ãå‡ºã™
+				myBullet_Visible[myBullet_count] = true; //è¡¨ç¤ºã‚’æœ‰åŠ¹åŒ–
+				myBullet_count++;
+				//è‡ªåˆ†ã®å¼¾ã‚¯ãƒ©ã‚¹ã®ä¸Šé™æ•°ã«é”ã—ãŸã‚‰0ã«æˆ»ã™
+				if (myBullet_count == MY_BULLET_MAX) myBullet_count = 0;
 			}
 		}
-		//’e‚ª‰æ–ÊŠO‚Éo‚½‚ç•\¦‚ğ‚â‚ß‚é
-		for (i=0; i<TAMA_MAX; i++) {
-			if (tamaVisible[i]) {
-				tama_temp = drawMyBullet[i].getTamaXYWH();
-				if (tama_temp[1] < 0) tamaVisible[i] = false;
+		//ç”»é¢å¤–(ä¸Š)ã«å‡ºãŸè‡ªåˆ†ã®å¼¾ã¯è¡¨ç¤ºã‚’ã‚„ã‚ã‚‹
+		for (i=0; i<MY_BULLET_MAX; i++) {
+			if (myBullet_Visible[i]) {
+				myBulletXYWH_temp = drawMyBullet[i].getMyBulletXYWH();
+				if (myBulletXYWH_temp[1] < 0) myBullet_Visible[i] = false;
 			}
 		}
-		//”­Ë‚µ‚½©•ª‚Ì’e‚ğ•`‰æ
-		for (i=0; i<TAMA_MAX; i++) {
-			if (tamaVisible[i]) drawMyBullet[i].drawMyShipTama(gBuf2);
+		//ç™ºå°„ã—ãŸè‡ªåˆ†ã®å¼¾ã‚’æç”»
+		for (i=0; i<MY_BULLET_MAX; i++) {
+			if (myBullet_Visible[i]) drawMyBullet[i].drawMyBullet(gBuf2);
 		}
 		
-		//©•ª‚Ì’e‚ª“G‚É“–‚½‚Á‚Ä‚¢‚½‚ç”š”­‚ğ¶¬‚µ‚Ä“G‚ğÁ‚·
-		for (i=0; i<TAMA_MAX; i++)
-			if (tamaVisible[i]) EnemyAndMyShipTama(gBuf2);
-		//¶¬‚³‚ê‚½”š”­‚ğ•`‰æ
+		/**** â‘ è‡ªåˆ†ã®å¼¾ã¨æ•µæ©Ÿ ã®è¡çªåˆ¤å®š ****/
+		//è‡ªåˆ†ã®å¼¾ãŒæ•µã«å½“ãŸã£ã¦ã„ãŸã‚‰çˆ†ç™ºã‚’ç”Ÿæˆã—ã¦æ•µã‚’æ¶ˆã™
+		for (i=0; i<MY_BULLET_MAX; i++)
+			if (myBullet_Visible[i]) EnemyAndmyBulletXYWH_temp(gBuf2);
+		//ç”Ÿæˆã•ã‚ŒãŸçˆ†ç™ºã‚’æç”»
 		for (i=0; i<EXPLOSION_MAX; i++)
 			if (ExplosionVisible[i] == true) createExplosion[i].drawFire(gBuf2);
-		//•`‰æ‚ÌI‚í‚Á‚½”š”­‚Ì•\¦‚ğ’â~
+		//æç”»ã®çµ‚ã‚ã£ãŸçˆ†ç™ºã®è¡¨ç¤ºã‚’åœæ­¢
 		for (i=0; i<EXPLOSION_MAX; i++)
 			if (createExplosion[i].returnFireStep() > 140) ExplosionVisible[i] = false;
 		
-		//“G‚Ì’e‚É©•ª‚ª“–‚½‚Á‚½‚çƒQ[ƒ€ƒI[ƒo[
-		//hogeeeeeeeeee!!
+		/**** â‘¡æ•µã®å¼¾ã¨è‡ªæ©Ÿ ã®è¡çªåˆ¤å®š ****/
+		//æ•µã®å¼¾ã«è‡ªæ©ŸãŒå½“ãŸã£ãŸã‚‰ã‚²ãƒ¼ãƒ ã‚ªãƒ¼ãƒãƒ¼
+			////
 		
-		//•¶š‚È‚Ç‚ğ•`‰æ
+		/**** â‘¢æ•µæ©Ÿã¨è‡ªæ©Ÿ ã®è¡çªåˆ¤å®š ****/
+		//æ•µæ©Ÿã«è‡ªæ©ŸãŒå½“ãŸã£ãŸã‚‰ã‚²ãƒ¼ãƒ ã‚ªãƒ¼ãƒãƒ¼
+		
+		//æ–‡å­—ãªã©ã‚’æç”»
 		gBuf2.setColor(Color.white);
 		gBuf2.drawString("GAME START...", 10, 80);
 		gBuf2.drawString("STAGE 1", 10, 96);
@@ -341,7 +354,7 @@ public class MyCanvas extends Canvas implements Runnable {
 	}
 
 	/*--------------------------------------------------
-	 * ƒQ[ƒ€ƒI[ƒo[
+	 * ã‚²ãƒ¼ãƒ ã‚ªãƒ¼ãƒãƒ¼
 	 *-------------------------------------------------*/
 	private void drawGameOver(Graphics gBuf2) {
 		gBuf2.setColor(Color.white);
@@ -352,45 +365,45 @@ public class MyCanvas extends Canvas implements Runnable {
 	}
 	
 	/**************************
-	 * ©•ª‚Ì’e‚Æ“G‚ÌÀ•W‚ÌÕ“Ë‚ğ”»’è‚·‚éŠÖ”(‰¼)
+	 * è‡ªåˆ†ã®å¼¾ã¨æ•µã®åº§æ¨™ã®è¡çªã‚’åˆ¤å®šã™ã‚‹é–¢æ•°(ä»®)
 	 **************************/
-	private void EnemyAndMyShipTama (Graphics gBuf2) {
+	private void EnemyAndmyBulletXYWH_temp (Graphics gBuf2) {
 		int i, j;
 		int[] enemyShipA_XYWH = new int[4];
-		int[] myShipTama; //’e‚ÌÀ•W‚ğæ‚èŠ¸‚¦‚¸“ü‚ê‚Ä‚¨‚­‚½‚ß‚Ì”z—ñ
+		int[] myBulletXYWH_temp; //å¼¾ã®åº§æ¨™ã‚’å–ã‚Šæ•¢ãˆãšå…¥ã‚Œã¦ãŠããŸã‚ã®é…åˆ—
 		
-		for (j=0; j<ENEMY_MAX; j++) {
-			enemyShipA_XYWH = EnemyShip[j].getEnemyShip_XYWH(); //“G‹@‚ÌÀ•WA‘å‚«‚³‚ğæ“¾
-			if (enemyVisible[j] == true) { //’e‚ª—LŒø‚¾‚Á‚½‚ç
-				for (i=0; i<TAMA_MAX; i++) {
-					if (tamaVisible[i] == true) { //“G‚ª‚à‚¤€‚ñ‚Å‚½‚ç”»’f‚¢‚ç‚È‚¢
-						myShipTama = drawMyBullet[i].getTamaXYWH(); //©•ª‚ÌŒ‚‚Á‚½’e‚ÌÀ•WB‰¼B
-						//XÀ•W‚Ì”»’è(“G‚Ì‘å‚«‚³‚Å‚à”»’f)
-						if (enemyShipA_XYWH[0]<=myShipTama[0] && myShipTama[0]<=enemyShipA_XYWH[0]+enemyShipA_XYWH[2]) {
-							//YÀ•W”»’è(“G‚Ì‘å‚«‚³‚Å‚à”»’f)
-							if (enemyShipA_XYWH[1]<=myShipTama[1] && myShipTama[1]<=enemyShipA_XYWH[1]+enemyShipA_XYWH[3]) {
-							//À•W‚ª”í‚Á‚Ä‚¢‚½‚ç
-								//ƒXƒRƒA’Ç‰Á
+		for (j=0; j<ENEMY_SHIP_MAX; j++) {
+			enemyShipA_XYWH = enemyShip[j].getEnemyShip_XYWH(); //æ•µæ©Ÿã®åº§æ¨™ã€å¤§ãã•ã‚’å–å¾—
+			if (enemyShip_Visible[j] == true) { //å¼¾ãŒæœ‰åŠ¹ã ã£ãŸã‚‰
+				for (i=0; i<MY_BULLET_MAX; i++) {
+					if (myBullet_Visible[i] == true) { //æ•µãŒã‚‚ã†æ­»ã‚“ã§ãŸã‚‰åˆ¤æ–­ã„ã‚‰ãªã„
+						myBulletXYWH_temp = drawMyBullet[i].getMyBulletXYWH(); //è‡ªåˆ†ã®æ’ƒã£ãŸå¼¾ã®åº§æ¨™
+						//Xåº§æ¨™ã®åˆ¤å®š(æ•µã®å¤§ãã•ã§ã‚‚åˆ¤æ–­)
+						if (enemyShipA_XYWH[0]<=myBulletXYWH_temp[0] && myBulletXYWH_temp[0]<=enemyShipA_XYWH[0]+enemyShipA_XYWH[2]) {
+							//Yåº§æ¨™åˆ¤å®š(æ•µã®å¤§ãã•ã§ã‚‚åˆ¤æ–­)
+							if (enemyShipA_XYWH[1]<=myBulletXYWH_temp[1] && myBulletXYWH_temp[1]<=enemyShipA_XYWH[1]+enemyShipA_XYWH[3]) {
+							//åº§æ¨™ãŒè¢«ã£ã¦ã„ãŸã‚‰
+								//ã‚¹ã‚³ã‚¢è¿½åŠ 
 								score += 5;
 								if (score > score_max) score_max = score;
 								
-								//”š”­‚ğ¶¬
+								//çˆ†ç™ºã‚’ç”Ÿæˆ
 								createExplosion[explosion_count].init(enemyShipA_XYWH);
 								ExplosionVisible[explosion_count] = true;
 								
 								explosion_count++;
 								if (explosion_count == EXPLOSION_MAX-1) explosion_count = 0;
 								
-								//“G‚Ì‹@‘Ì‚ğÁ‚·
-								enemyVisible[j] = false;
-								//’e‚àÁ‚·
-								tamaVisible[i] = false;
+								//æ•µã®æ©Ÿä½“ã‚’æ¶ˆã™
+								enemyShip_Visible[j] = false;
+								//å¼¾ã‚‚æ¶ˆã™
+								myBullet_Visible[i] = false;
 							}
 						}
 					}
 				}
-			} else { //‚¨‘O‚Í‚à‚¤€‚ñ‚Å‚¢ry
-				//“G‚Í€‚ñ‚Å‚¢‚é‚Ì‚Å“¾“_E”š”­‚Í‚¢‚¶‚ç‚È‚¢
+			} else { //ãŠå‰ã¯ã‚‚ã†æ­»ã‚“ã§ã„ry
+				//æ•µã¯æ­»ã‚“ã§ã„ã‚‹ã®ã§å¾—ç‚¹ãƒ»çˆ†ç™ºã¯ã„ã˜ã‚‰ãªã„
 			}
 		}
 	}	

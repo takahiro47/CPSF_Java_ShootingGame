@@ -1,5 +1,63 @@
 package shootingGame201201;
 
-public class DrawMyShip {
-	//
+import java.awt.Canvas;
+import java.awt.Graphics;
+import java.awt.Image;
+
+public class DrawMyShip extends Canvas {
+	//自機 の定義
+	static final int MOVESPEED = 4; //動く速さの設定
+	
+	Image MyShip_img; //画像
+	int[] MyShipXY = {200, 500}; //初期座標
+	int[] MyShipSize = {162/3, 210/3}; //自機の大きさ(自動取得したいけど分からないから取り敢えず)
+	
+	/****************************************************
+	 * コンストラクタ
+	 ****************************************************/
+	DrawMyShip() {
+		System.out.println("動作てすと: DrawMyShip/コンストラクタ");
+		
+		MyShip_img = getToolkit().getImage("img/myship@x162y210.png"); //自機
+	}
+	
+	/****************************************************
+	 * 自機の位置の初期化
+	 ****************************************************/
+	init () {
+		System.out.println("動作てすと: DrawMyShip/init");
+	}
+	
+	/****************************************************
+	 * 自機を移動する関数
+	 ****************************************************/
+	void moveMyShip (int LeftRight, int UpDown) {
+		//左右移動(端に行ったらストップ)
+		if (LeftRight == -1)
+			if (MyShipXY[0] >= MOVESPEED) MyShipXY[0] -= MOVESPEED;
+		else if (LeftRight == 1)
+			if (MyShipXY[0] <= WIDTH-MyShipSize[0]-MOVESPEED) MyShipXY[0] += MOVESPEED;
+		//上下移動(端に行ったらストップ)
+		if (UpDown == -1)
+			if (MyShipXY[1] >= MOVESPEED) MyShipXY[1] -= MOVESPEED;
+		else if (UpDown == 1)
+			if (MyShipXY[1] <= HEIGHT-MyShipSize[1]-MOVESPEED) MyShipXY[1] += MOVESPEED;
+	}
+	
+	/****************************************************
+	 * 自機を描画する関数
+	 ****************************************************/
+	void drawMyShip (Graphics gBuf2) {
+//		System.out.println("動作てすと: DrawMyShip/drawShip");
+		gBuf2.drawImage(MyShip_img,
+				MyShipXY[0], MyShipXY[1], MyShipSize[0], MyShipSize[1], this);
+	}
+	
+	/****************************************************
+	 * 別クラスから自機の位置を取得する為の関数
+	 ****************************************************/
+	int[] getMyShipXYWH () {
+		int[] tempXYWH = {MyShipXY[0], MyShipXY[1], MyShipSize[0], MyShipSize[1]};
+		return tempXYWH;
+	}
 }
