@@ -15,7 +15,6 @@ public class GameFrame extends JFrame { //JFrame
 	/* •Ï” */
 	private BufferedImage pictureImage;
 	
-	
 	/* mainŠÖ” */
 	public static void main(String[] args) {
 		new GameFrame();

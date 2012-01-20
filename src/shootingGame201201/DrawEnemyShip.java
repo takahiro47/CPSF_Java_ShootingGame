@@ -5,7 +5,7 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.util.Random;
 
-public class DrawEnemy extends Canvas {
+public class DrawEnemyShip extends Canvas {
 	/****************************************************
 	 * 変数群
 	 ****************************************************/
@@ -33,8 +33,8 @@ public class DrawEnemy extends Canvas {
 	/****************************************************
 	 * コンストラクタ
 	 ****************************************************/
-	DrawEnemy() {
-		System.out.println("動作てすと: DrawEnemy/コンストラクタ");
+	DrawEnemyShip() {
+		System.out.println("動作てすと: DrawEnemyShip/コンストラクタ");
 		/* 画像の読み込み */
 		EnemyShip_TypeA_img = getToolkit().getImage("img/enemy01_c@x58y64.png"); //敵機A
 		EnemyShip_TypeB_img = getToolkit().getImage("img/enemy02_b@x64y64.png"); //敵機B

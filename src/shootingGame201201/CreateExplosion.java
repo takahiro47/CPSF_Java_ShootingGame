@@ -23,13 +23,13 @@ public class CreateExplosion extends Canvas {
 	 * ƒRƒ“ƒXƒgƒ‰ƒNƒ^
 	 **************************/
 	CreateExplosion() {
-		img_fire_a = getToolkit().getImage("img/fire_a@x64y64.png"); //”š”­Œn
-		img_fire_b = getToolkit().getImage("img/fire_b@x64y64.png"); //”š”­Œn
-		img_fire_c = getToolkit().getImage("img/fire_c@x64y64.png"); //”š”­Œn
-		img_fire_d = getToolkit().getImage("img/fire_d@x64y64.png"); //”š”­Œn
-		img_fire_e = getToolkit().getImage("img/fire_e@x64y64.png"); //”š”­Œn
-		img_fire_f = getToolkit().getImage("img/fire_f@x64y64.png"); //”š”­Œn
-		img_fire_g = getToolkit().getImage("img/fire_g@x64y64.png"); //”š”­Œn
+		img_fire_a = getToolkit().getImage("img/fire01_a@x64y64.png"); //”š”­Œn
+		img_fire_b = getToolkit().getImage("img/fire01_b@x64y64.png"); //”š”­Œn
+		img_fire_c = getToolkit().getImage("img/fire01_c@x64y64.png"); //”š”­Œn
+		img_fire_d = getToolkit().getImage("img/fire01_d@x64y64.png"); //”š”­Œn
+		img_fire_e = getToolkit().getImage("img/fire01_e@x64y64.png"); //”š”­Œn
+		img_fire_f = getToolkit().getImage("img/fire01_f@x64y64.png"); //”š”­Œn
+		img_fire_g = getToolkit().getImage("img/fire01_g@x64y64.png"); //”š”­Œn
 		fireStep = 0;
 	}
 	

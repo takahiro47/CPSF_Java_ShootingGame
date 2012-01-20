@@ -52,13 +52,13 @@ public class MyCanvas extends Canvas implements Runnable {
 	KeyboardListener keyboard;
 	//敵クラス
 	static final int ENEMY_MAX = 80; //敵の最大数
-	DrawEnemy[] enemy;
+	DrawEnemyShip[] enemy;
 	boolean enemyVisible[] = new boolean[ENEMY_MAX];
 	int enemy_count;
 	int[] temp_enemyXYWH = new int[ENEMY_MAX];
 	//自分の弾クラス
 	static final int TAMA_MAX = 100; //自分が一気に撃てる弾の最大数
-	DrawTama[] drawTama;
+	DrawMyBullet[] drawMyBullet;
 	boolean tamaVisible[] = new boolean[TAMA_MAX];
 	int tama_count;
 	int[] tama_temp = new int[TAMA_MAX];
@@ -83,16 +83,16 @@ public class MyCanvas extends Canvas implements Runnable {
 		keyboard = new KeyboardListener();
 		addKeyListener(keyboard);
 		//敵クラス(取り敢えず1個→量産可能に)
-		enemy = new DrawEnemy[ENEMY_MAX];
-		for (i=0; i<ENEMY_MAX; i++) enemy[i] = new DrawEnemy();
+		enemy = new DrawEnemyShip[ENEMY_MAX];
+		for (i=0; i<ENEMY_MAX; i++) enemy[i] = new DrawEnemyShip();
 		enemy_count = 0;
 		//爆発生成クラス(爆発はEXPLOSION_MAX個まで一気に起こる)
 		createExplosion = new CreateExplosion[EXPLOSION_MAX];
 		for (i=0; i<EXPLOSION_MAX; i++) createExplosion[i] = new CreateExplosion();
 		explosion_count = 0;
 		//自分の弾クラス(弾はTAMA_MAX発まで一気に撃てる)
-		drawTama = new DrawTama[TAMA_MAX];
-		for (i=0; i<TAMA_MAX; i++) drawTama[i] = new DrawTama();
+		drawMyBullet = new DrawMyBullet[TAMA_MAX];
+		for (i=0; i<TAMA_MAX; i++) drawMyBullet[i] = new DrawMyBullet();
 		tama_count = 0;
 	}
 	
@@ -113,7 +113,7 @@ public class MyCanvas extends Canvas implements Runnable {
 		//弾を表示と位置をリセット
 		for (a=0; a<TAMA_MAX; a++) {
 			tamaVisible[a] = false;
-			drawTama[a].init();
+			drawMyBullet[a].init();
 		}
 		
 		//爆発をリセット
@@ -280,7 +280,7 @@ public class MyCanvas extends Canvas implements Runnable {
 		//スペースキーで弾を発射
 		if (keyboard.SpaceKeyListener() == 1) { //Spaceキー押下時
 			if (counter%7 == 0) { //連射しすぎ防止のため、カウンターが8の倍数の時だけ発射。
-				drawTama[tama_count].init(myShipXY, myShipSize); //現在の位置から弾が動き出す
+				drawMyBullet[tama_count].init(myShipXY, myShipSize); //現在の位置から弾が動き出す
 				tamaVisible[tama_count] = true; //表示を有効化
 				tama_count++;
 				
@@ -291,13 +291,13 @@ public class MyCanvas extends Canvas implements Runnable {
 		//弾が画面外に出たら表示をやめる
 		for (i=0; i<TAMA_MAX; i++) {
 			if (tamaVisible[i]) {
-				tama_temp = drawTama[i].getTamaXYWH();
+				tama_temp = drawMyBullet[i].getTamaXYWH();
 				if (tama_temp[1] < 0) tamaVisible[i] = false;
 			}
 		}
 		//発射した自分の弾を描画
 		for (i=0; i<TAMA_MAX; i++) {
-			if (tamaVisible[i]) drawTama[i].drawMyShipTama(gBuf2);
+			if (tamaVisible[i]) drawMyBullet[i].drawMyShipTama(gBuf2);
 		}
 		
 		//自分の弾が敵に当たっていたら爆発を生成して敵を消す
@@ -358,7 +358,7 @@ public class MyCanvas extends Canvas implements Runnable {
 			if (enemyVisible[j] == true) { //弾が有効だったら
 				for (i=0; i<TAMA_MAX; i++) {
 					if (tamaVisible[i] == true) { //敵がもう死んでたら判断いらない
-						myShipTama = drawTama[i].getTamaXYWH(); //自分の撃った弾の座標。仮。
+						myShipTama = drawMyBullet[i].getTamaXYWH(); //自分の撃った弾の座標。仮。
 						//X座標の判定(敵の大きさでも判断)
 						if (enemyShipA_XYWH[0]<=myShipTama[0] && myShipTama[0]<=enemyShipA_XYWH[0]+enemyShipA_XYWH[2]) {
 							//Y座標判定(敵の大きさでも判断)

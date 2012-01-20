@@ -1,5 +1,5 @@
 package shootingGame201201;
 
-public class DrawMe {
+public class DrawMyShip {
 	//
 }

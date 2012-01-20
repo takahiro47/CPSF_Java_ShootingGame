@@ -4,7 +4,7 @@ import java.awt.Canvas;
 import java.awt.Graphics;
 import java.awt.Image;
 
-public class DrawTama extends Canvas {
+public class DrawMyBullet extends Canvas {
 	//画像系
 	Image img_tama; //弾の画像
 	//座標系
@@ -13,17 +13,17 @@ public class DrawTama extends Canvas {
 	int[] tamaMOVE = {0, 0};
 	
 	/* コンストラクタ */
-	DrawTama() {
-		System.out.println("動作てすと: DrawTama/コンストラクタ");
+	DrawMyBullet() {
+		System.out.println("動作てすと: DrawMyBullet/コンストラクタ");
 		//画像
-		img_tama = getToolkit().getImage("img/tama01_a@x2y10.png"); //自分の弾
+		img_tama = getToolkit().getImage("img/MyBullet01_a@x2y10.png"); //自分の弾
 	}
 	
 	/**************************
 	 * 弾の位置と動きを0に初期化(リセットする時のinit)
 	 **************************/
 	public void init() {
-		System.out.println("動作てすと: DrawTama/init");
+		System.out.println("動作てすと: DrawMyBullet/init");
 		myShipXYWH_AtThat[0] = 0;
 		myShipXYWH_AtThat[1] = 0;
 		myShipXYWH_AtThat[2] = 0;
@@ -36,7 +36,7 @@ public class DrawTama extends Canvas {
 	 * 弾の位置と動きを初期化(撃つときのinit)
 	 **************************/
 	public void init(int[] myShipXY, int[] myShipSize) {
-		System.out.println("動作てすと: DrawTama/init");
+		System.out.println("動作てすと: DrawMyBullet/init");
 		myShipXYWH_AtThat[0] = myShipXY[0];
 		myShipXYWH_AtThat[1] = myShipXY[1];
 		myShipXYWH_AtThat[2] = myShipSize[0];
@@ -49,7 +49,7 @@ public class DrawTama extends Canvas {
 	 * 自分の弾を生成する関数
 	 **************************/
 	void drawMyShipTama (Graphics gBuf2) {
-//		System.out.println("動作てすと: DrawTama/drawShipTama");
+//		System.out.println("動作てすと: DrawMyBullet/drawShipTama");
 		gBuf2.drawImage(img_tama, 
 				myShipXYWH_AtThat[0]+myShipXYWH_AtThat[2]/2/*これで真ん中から発射*/+tamaMOVE[0], myShipXYWH_AtThat[1]+tamaMOVE[1],
 				img_tamaSize[0], img_tamaSize[1], this);
